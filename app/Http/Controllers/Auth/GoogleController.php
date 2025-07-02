@@ -48,6 +48,8 @@ class GoogleController extends Controller
                         'avatar' => $googleUser->getAvatar(),
                         'email_verified_at' => now(), // Google users are pre-verified
                     ]);
+
+                    $user->assignRole('company owner');
                 }
             }
 

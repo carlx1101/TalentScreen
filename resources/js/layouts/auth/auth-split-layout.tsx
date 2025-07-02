@@ -1,4 +1,5 @@
 import AppLogoIcon from '@/components/app-logo-icon';
+import { Toaster } from '@/components/ui/sonner';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
@@ -40,6 +41,7 @@ export default function AuthSplitLayout({ children, title, description }: PropsW
                     {children}
                 </div>
             </div>
+            <Toaster />
         </div>
     );
 }

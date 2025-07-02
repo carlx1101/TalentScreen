@@ -27,8 +27,19 @@ class Company extends Model
         'youtube',
     ];
 
+    /**
+     * The owner of the company.
+     */
     public function owner()
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return $this->belongsToMany(User::class, 'company_owners', 'company_id', 'user_id')->withTimestamps();
+    }
+
+    /**
+     * The editors of the company.
+     */
+    public function editors()
+    {
+        return $this->belongsToMany(User::class, 'company_editors', 'company_id', 'user_id')->withTimestamps();
     }
 }

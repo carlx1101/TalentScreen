@@ -82,3 +82,21 @@ export interface User {
   permissions?: string[];
   // [key: string]: unknown;
 }
+
+export interface Company {
+  id: number;
+  name: string;
+  ssm_number: string;
+  ssm_document_path: string;
+  industry: string;
+  company_size: string | null;
+  company_type: string | null;
+  address: string | null;
+  logo_path: string | null;
+  banner_path: string | null;
+  website: string | null;
+  facebook: string | null;
+  twitter: string | null;
+  instagram: string | null;
+  youtube: string | null;
+}

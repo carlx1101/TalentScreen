@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
-use App\Listeners\RedirectAfterRegistration;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Event;
+use App\Policies\RolePolicy;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Role;
+use App\Models\Company;
+use App\Policies\CompanyPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::listen(Registered::class, RedirectAfterRegistration::class);
+        Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(Company::class, CompanyPolicy::class);
     }
 }

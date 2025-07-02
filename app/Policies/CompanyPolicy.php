@@ -2,20 +2,18 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Company;
-use Illuminate\Auth\Access\HandlesAuthorization;
+use App\Models\User;
+use Illuminate\Auth\Access\Response;
 
 class CompanyPolicy
 {
-    use HandlesAuthorization;
-
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['admin', 'company owner', 'company editor']);
+        return $user->can('view all companies');
     }
 
     /**
@@ -23,9 +21,7 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company): bool
     {
-        return $user->hasRole('admin') ||
-               $user->hasRole('company owner') ||
-               $user->hasRole('company editor');
+        return $user->can('view company') && $user->ownedCompanies()->where('company_id', $company->id)->exists();
     }
 
     /**
@@ -33,7 +29,7 @@ class CompanyPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('company owner');
+        return $user->can('create company');
     }
 
     /**
@@ -41,9 +37,7 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company): bool
     {
-        return $user->hasRole('admin') ||
-               $user->hasRole('company owner') ||
-               $user->hasRole('company editor');
+        return $user->can('edit company') && $user->ownedCompanies()->where('company_id', $company->id)->exists();
     }
 
     /**
@@ -51,7 +45,7 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('company owner');
+        return $user->can('delete company');
     }
 
     /**
@@ -59,7 +53,7 @@ class CompanyPolicy
      */
     public function restore(User $user, Company $company): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('company owner');
+        return $user->can('restore company');
     }
 
     /**
@@ -67,14 +61,6 @@ class CompanyPolicy
      */
     public function forceDelete(User $user, Company $company): bool
     {
-        return $user->hasRole('admin');
-    }
-
-    /**
-     * Determine whether the user can invite company editors.
-     */
-    public function inviteEditor(User $user, Company $company): bool
-    {
-        return $user->hasRole('admin') || $user->hasRole('company owner');
+        return $user->can('delete company');
     }
 }

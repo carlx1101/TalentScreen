@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class RoleController extends Controller
 {
-    use AuthorizesRequests;
-
     public function index()
     {
         $this->authorize('viewAny', Role::class);
@@ -51,7 +50,10 @@ class RoleController extends Controller
 
         $role->syncPermissions($request->permissions);
 
-        return back()->with('success', "Permissions updated for role '{$role->name}'");
+        return response()->json([
+            'success' => true,
+            'message' => "Permissions updated for role '{$role->name}'",
+        ]);
     }
 
     public function createRole(Request $request)
@@ -67,7 +69,10 @@ class RoleController extends Controller
         $role = Role::create(['name' => $request->name]);
         $role->syncPermissions($request->permissions ?? []);
 
-        return back()->with('success', "Role '{$role->name}' created successfully");
+        return response()->json([
+            'success' => true,
+            'message' => "Role '{$role->name}' created successfully",
+        ]);
     }
 
     public function deleteRole(Role $role)
@@ -77,7 +82,10 @@ class RoleController extends Controller
         $roleName = $role->name;
         $role->delete();
 
-        return back()->with('success', "Role '{$roleName}' deleted successfully");
+        return response()->json([
+            'success' => true,
+            'message' => "Role '{$roleName}' deleted successfully",
+        ]);
     }
 
     public function createPermission(Request $request)
@@ -100,6 +108,9 @@ class RoleController extends Controller
         $permissionName = $permission->name;
         $permission->delete();
 
-        return back()->with('success', "Permission '{$permissionName}' deleted successfully");
+        return response()->json([
+            'success' => true,
+            'message' => "Permission '{$permissionName}' deleted successfully",
+        ]);
     }
 }

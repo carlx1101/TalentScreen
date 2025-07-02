@@ -15,8 +15,8 @@ return new class extends Migration
             $table->string('ssm_number');
             $table->string('ssm_document_path');
             $table->string('industry');
-            $table->string('company_size');
-            $table->string('company_type');
+            $table->string('company_size')->nullable();
+            $table->string('company_type')->nullable();
             $table->string('address')->nullable();
             $table->string('logo_path')->nullable();
             $table->string('banner_path')->nullable();

@@ -75,6 +75,22 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function company()
     {
-        return $this->hasOne(Company::class, 'owner_id');
+        return $this->hasOne(Company::class, 'owner_id', 'id');
+    }
+
+    /**
+     * Companies this user owns.
+     */
+    public function ownedCompanies()
+    {
+        return $this->belongsToMany(Company::class, 'company_owners', 'user_id', 'company_id')->withTimestamps();
+    }
+
+    /**
+     * Companies this user is an editor of.
+     */
+    public function editorCompanies()
+    {
+        return $this->belongsToMany(Company::class, 'company_editors', 'user_id', 'company_id')->withTimestamps();
     }
 }

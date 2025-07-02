@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Head, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import axios from '@/lib/axios';
+import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, Plus } from 'lucide-react';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
 
 interface Role {
   id: number;
@@ -26,62 +30,141 @@ interface Props {
   };
 }
 
-export default function RolePermissionManagement({ roles, permissions, can }: Props) {
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Admin',
+    href: '/admin',
+  },
+  {
+    title: 'Role & Permission Management',
+    href: '/admin/roles',
+  },
+];
+
+export default function RolePermissionManagement({ roles: initialRoles, permissions: initialPermissions, can }: Props) {
+  const [roles, setRoles] = useState<Role[]>(initialRoles);
+  const [permissions, setPermissions] = useState<string[]>(initialPermissions);
   const [newRoleName, setNewRoleName] = useState('');
   const [newRolePermissions, setNewRolePermissions] = useState<string[]>([]);
   const [newPermissionName, setNewPermissionName] = useState('');
   const [processing, setProcessing] = useState(false);
 
-  const handleUpdateRolePermissions = (roleId: number, rolePermissions: string[]) => {
+  const handleUpdateRolePermissions = async (roleId: number, rolePermissions: string[]) => {
     setProcessing(true);
-    router.put(`/admin/roles/${roleId}/permissions`, {
-      permissions: rolePermissions,
-    }, {
-      onFinish: () => setProcessing(false),
-    });
-  };
-
-  const handleCreateRole = () => {
-    setProcessing(true);
-    router.post('/admin/roles', {
-      name: newRoleName,
-      permissions: newRolePermissions,
-    }, {
-      onSuccess: () => {
-        setNewRoleName('');
-        setNewRolePermissions([]);
-      },
-      onFinish: () => setProcessing(false),
-    });
-  };
-
-  const handleDeleteRole = (roleId: number) => {
-    if (confirm('Are you sure you want to delete this role?')) {
-      setProcessing(true);
-      router.delete(`/admin/roles/${roleId}`, {
-        onFinish: () => setProcessing(false),
+    try {
+      await axios.put(route('admin.roles.update-permissions', { role: roleId }), {
+        permissions: rolePermissions,
       });
+      toast.success('Role permissions updated successfully');
+
+      // Update local state
+      setRoles(prevRoles =>
+        prevRoles.map(role =>
+          role.id === roleId
+            ? { ...role, permissions: rolePermissions }
+            : role
+        )
+      );
+    } catch (error) {
+      console.error('Error updating role permissions:', error);
+      console.log('Showing error toast for role permissions update');
+      toast.error('Failed to update role permissions');
+    } finally {
+      setProcessing(false);
     }
   };
 
-  const handleCreatePermission = () => {
+  const handleCreateRole = async () => {
     setProcessing(true);
-    router.post('/admin/permissions', {
-      name: newPermissionName,
-    }, {
-      onSuccess: () => {
-        setNewPermissionName('');
-      },
-      onFinish: () => setProcessing(false),
-    });
+    try {
+      const response = await axios.post('/admin/roles', {
+        name: newRoleName,
+        permissions: newRolePermissions,
+      });
+      toast.success('Role created successfully');
+
+      // Add new role to local state
+      const newRole = response.data.role || {
+        id: Date.now(), // fallback ID
+        name: newRoleName,
+        permissions: newRolePermissions,
+        can: {
+          update_role: true,
+          delete_role: true,
+        }
+      };
+
+      setRoles(prevRoles => [...prevRoles, newRole]);
+      setNewRoleName('');
+      setNewRolePermissions([]);
+    } catch (error) {
+      console.error('Error creating role:', error);
+      toast.error('Failed to create role');
+    } finally {
+      setProcessing(false);
+    }
   };
 
-  const handleDeletePermission = (permissionName: string) => {
+  const handleDeleteRole = async (roleId: number) => {
+    if (confirm('Are you sure you want to delete this role?')) {
+      setProcessing(true);
+      try {
+        await axios.delete(`/admin/roles/${roleId}`);
+        toast.success('Role deleted successfully');
+
+        // Remove role from local state
+        setRoles(prevRoles => prevRoles.filter(role => role.id !== roleId));
+      } catch (error) {
+        console.error('Error deleting role:', error);
+        toast.error('Failed to delete role');
+      } finally {
+        setProcessing(false);
+      }
+    }
+  };
+
+  const handleCreatePermission = async () => {
+    setProcessing(true);
+    try {
+      await axios.post('/admin/permissions', {
+        name: newPermissionName,
+      });
+      toast.success('Permission created successfully');
+
+      // Add new permission to local state
+      setPermissions(prevPermissions => [...prevPermissions, newPermissionName]);
+      setNewPermissionName('');
+    } catch (error) {
+      console.error('Error creating permission:', error);
+      toast.error('Failed to create permission');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleDeletePermission = async (permissionName: string) => {
     if (confirm('Are you sure you want to delete this permission?')) {
       setProcessing(true);
-      router.delete(`/admin/permissions/${permissionName}`, {
-        onFinish: () => setProcessing(false),
-      });
+      try {
+        await axios.delete(`/admin/permissions/${permissionName}`);
+        toast.success('Permission deleted successfully');
+
+        // Remove permission from local state
+        setPermissions(prevPermissions => prevPermissions.filter(p => p !== permissionName));
+
+        // Also remove from all roles
+        setRoles(prevRoles =>
+          prevRoles.map(role => ({
+            ...role,
+            permissions: role.permissions.filter(p => p !== permissionName)
+          }))
+        );
+      } catch (error) {
+        console.error('Error deleting permission:', error);
+        toast.error('Failed to delete permission');
+      } finally {
+        setProcessing(false);
+      }
     }
   };
 
@@ -94,10 +177,10 @@ export default function RolePermissionManagement({ roles, permissions, can }: Pr
   };
 
   return (
-    <>
+    <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Role & Permission Management" />
 
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Role & Permission Management
@@ -284,6 +367,6 @@ export default function RolePermissionManagement({ roles, permissions, can }: Pr
           </Card>
         )}
       </div>
-    </>
+    </AppLayout>
   );
 }

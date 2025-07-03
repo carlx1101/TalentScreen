@@ -16,8 +16,8 @@ class RoleController extends Controller
     {
         $this->authorize('viewAny', Role::class);
 
-        $roles = Role::with('permissions')->get();
-        $permissions = Permission::all();
+        $roles = Role::with('permissions')->where('name', '!=', 'admin')->get();
+        $permissions = Permission::where('name', '!=', 'manage roles')->get();
 
         return Inertia::render('Admin/RolePermissionManagement', [
             'can' => [
@@ -42,6 +42,13 @@ class RoleController extends Controller
     public function updateRolePermissions(Request $request, Role $role)
     {
         $this->authorize('update', $role);
+
+        // validate role cannot be admin and permission cannot contain manage roles, throw validation error if true
+        if ($role->name === 'admin') {
+            throw ValidationException::withMessages([
+                'permissions' => "Role '{$role->name}' cannot be updated",
+            ]);
+        }
 
         $request->validate([
             'permissions' => 'array',
@@ -79,6 +86,13 @@ class RoleController extends Controller
     {
         $this->authorize('delete', $role);
 
+        // validate role cannot be admin, throw validation error if true
+        if ($role->name === 'admin') {
+            throw ValidationException::withMessages([
+                'role' => "Role '{$role->name}' cannot be deleted",
+            ]);
+        }
+
         $roleName = $role->name;
         $role->delete();
 
@@ -104,6 +118,13 @@ class RoleController extends Controller
     public function deletePermission(Permission $permission)
     {
         $this->authorize('managePermissions', Role::class);
+
+        // validate permission cannot be manage roles, throw validation error if true
+        if ($permission->name === 'manage roles') {
+            throw ValidationException::withMessages([
+                'permission' => "Permission '{$permission->name}' cannot be deleted",
+            ]);
+        }
 
         $permissionName = $permission->name;
         $permission->delete();

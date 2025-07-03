@@ -11,7 +11,8 @@ import { SharedData } from '@/types';
 export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     const user = auth.user;
-    const isAdmin = user?.roles?.includes('admin');
+    const isAdmin = user.roles.includes('admin');
+    const permissions = user.permissions;
 
     const mainNavItems: NavItem[] = [
         {
@@ -19,12 +20,15 @@ export function AppSidebar() {
             href: '/dashboard',
             icon: LayoutGrid,
         },
-        {
+    ];
+
+    if (permissions.includes('view company')) {
+        mainNavItems.push({
             title: 'Company',
             href: '/company/edit',
             icon: Building2,
-        },
-    ];
+        });
+    }
 
     // Add admin navigation for admin users
     if (isAdmin) {

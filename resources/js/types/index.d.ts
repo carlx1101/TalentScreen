@@ -78,8 +78,8 @@ export interface User {
   email_verified_at: Nullable<DateTime>;
   created_at: DateTime;
   updated_at: DateTime;
-  roles?: string[];
-  permissions?: string[];
+  permissions: string[];
+  roles: string[];
   // [key: string]: unknown;
 }
 

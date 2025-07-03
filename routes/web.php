@@ -4,7 +4,6 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\TestController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Auth\GoogleController;

@@ -95,7 +95,7 @@ class UsersController extends Controller
 ```php
 // Routes are protected by policies, no middleware needed
 Route::prefix('admin')->group(function () {
-    Route::get('/roles-permissions', [RoleController::class, 'index']);
+    Route::get('/roles-permissions', [RoleController::class, 'index'])->middleware('permission:manage roles');
     Route::put('/roles/{role}/permissions', [RoleController::class, 'updateRolePermissions']);
     // ... other routes
 });
@@ -181,23 +181,6 @@ Admins can access the role management interface at `/admin/roles-permissions` wh
 - Delete existing permissions (if they have permission)
 
 The interface uses policy-based permissions to show/hide UI elements.
-
-## Helper Functions
-
-The `PermissionHelper` class provides convenient methods:
-
-```php
-use App\Helpers\PermissionHelper;
-
-// Check user roles
-PermissionHelper::isAdmin($user);
-PermissionHelper::isCompanyOwner($user);
-PermissionHelper::isCompanyEditor($user);
-
-// Get user roles and permissions
-PermissionHelper::getUserRoles($user);
-PermissionHelper::getUserPermissions($user);
-```
 
 ## Commands
 

@@ -13,6 +13,13 @@ use App\Http\Controllers\ProfileSettingsController;
 use App\Http\Controllers\CompanyOwner\OnboardingController;
 use App\Http\Controllers\CompanyController;
 
+/*
+ * Public routes
+ *
+ * All roles, no authentication required
+ *
+ */
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -26,6 +33,21 @@ Route::get('/', function () {
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
 
+/*
+ * Utility routes
+ *
+ * Any roles as long as they have the permission:
+ *
+ */
+
+
+/*
+ * Dashboard and profile related routes
+ *
+ * Company owner, company editor, admin:
+ * - Dashboard
+ * - Profile
+ */
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
@@ -36,10 +58,6 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
-
-    // Company management routes
-    Route::get('/company/edit', [CompanyController::class, 'edit'])->name('company.edit');
-    Route::put('/company/update', [CompanyController::class, 'update'])->name('company.update');
 
     Route::get('settings/password', function () {
         return Inertia::render('Profile/Password');
@@ -55,14 +73,24 @@ Route::middleware([
     }
 });
 
+/*
+ * Company owner and company editor related routes
+ *
+ * Company owner:
+ * - Onboarding
+ * - Company management
+ *
+ * Company editor:
+ * - Company management
+ */
+// Onboarding Route (without middleware ensure onboarded)
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
+    'role:company owner',
 ])->prefix('company-owner')->group(function () {
-    // Onboarding Route
     Route::get('/onboarding', function () {
-        // Return onboarding view or controller
         return Inertia::render('CompanyOwner/Onboarding');
     })->name('onboarding');
     Route::post('/onboarding', [OnboardingController::class, 'store'])->name('onboarding.store');
@@ -72,9 +100,28 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
+    'role:company owner|company editor',
+    'ensure_onboarded',
+])->group(function () {
+    // Company management routes
+    Route::get('/company/edit', [CompanyController::class, 'edit'])->name('company.edit');
+    Route::put('/company/update', [CompanyController::class, 'update'])->name('company.update');
+});
+
+/*
+ * Admin related routes
+ *
+ * Admin:
+ * - Role and Permission Management
+ */
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+    'role:admin',
 ])->group(function () {
     // Role and Permission Management Routes (Admin only)
-    Route::prefix('admin')->middleware('permission:manage roles')->group(function () {
+    Route::prefix('admin')->group(function () {
         Route::get('/roles-permissions', [RoleController::class, 'index'])->name('admin.roles-permissions');
         Route::put('/roles/{role}/permissions', [RoleController::class, 'updateRolePermissions'])->name('admin.roles.update-permissions');
         Route::post('/roles', [RoleController::class, 'createRole'])->name('admin.roles.create');
@@ -82,6 +129,4 @@ Route::middleware([
         Route::post('/permissions', [RoleController::class, 'createPermission'])->name('admin.permissions.create');
         Route::delete('/permissions/{permission}', [RoleController::class, 'deletePermission'])->name('admin.permissions.delete');
     });
-
-    Route::get('/test', [TestController::class, 'test']);
 });

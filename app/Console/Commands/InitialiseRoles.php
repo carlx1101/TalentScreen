@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use Illuminate\Console\Command;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 
 class InitialiseRoles extends Command
@@ -77,13 +75,6 @@ class InitialiseRoles extends Command
             $role->syncPermissions($rolePermissions);
             $this->line("Created role '{$roleName}' with permissions: " . implode(', ', $rolePermissions));
         }
-
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('12345678'),
-            'email_verified_at' => now(),
-        ])->assignRole('admin');
 
         $this->info('Roles and permissions initialized successfully!');
     }

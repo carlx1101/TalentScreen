@@ -32,6 +32,19 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
 
+        if ($user) {
+            $viewPermissions = [];
+            if ($user->can('view all companies')) {
+                array_push($viewPermissions, 'view all companies');
+            }
+            if ($user->can('view company')) {
+                array_push($viewPermissions, 'view company');
+            }
+            if ($user->can('manage roles')) {
+                array_push($viewPermissions, 'manage roles');
+            }
+        }
+
         return [
             ...parent::share($request),
             'ziggy' => fn () => [
@@ -52,7 +65,7 @@ class HandleInertiaRequests extends Middleware
                     'created_at' => $user->created_at,
                     'updated_at' => $user->updated_at,
                     'roles' => $user->getRoleNames()->toArray(),
-                    'permissions' => $user->getAllPermissions()->pluck('name')->toArray(),
+                    'permissions' => $viewPermissions,
                 ] : null,
             ],
         ];

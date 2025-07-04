@@ -36,6 +36,7 @@ interface EditCompanyData {
     ssm_document: File | null;
     logo: File | null;
     banner: File | null;
+    method: 'put';
 }
 
 const industries = [
@@ -87,7 +88,7 @@ interface Props {
 }
 
 export default function EditCompany({ company }: Props) {
-    const { data, setData, put, processing, errors } = useForm<EditCompanyData>({
+    const { data, setData, post, processing, errors } = useForm<Required<EditCompanyData>>({
         name: company.name || '',
         ssm_number: company.ssm_number || '',
         industry: company.industry || '',
@@ -102,11 +103,12 @@ export default function EditCompany({ company }: Props) {
         ssm_document: null,
         logo: null,
         banner: null,
+        method: 'put'
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put('/company/update', {
+        post('/company/update', {
             onSuccess: () => {
                 toast.success('Company information updated successfully');
             },

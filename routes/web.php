@@ -4,6 +4,7 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Auth\GoogleController;
@@ -31,6 +32,8 @@ Route::get('/', function () {
 // Google OAuth routes
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
+
+Route::get('/test', [TestController::class, 'test'])->name('test');
 
 /*
  * Utility routes
@@ -129,3 +132,6 @@ Route::middleware([
         Route::delete('/permissions/{permission}', [RoleController::class, 'deletePermission'])->name('admin.permissions.delete');
     });
 });
+
+// include the jetstream routes
+require __DIR__.'/jetstream.php';

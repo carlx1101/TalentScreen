@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\CompanyUser;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 
 class Company extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'owner_id',
         'name',
-        'ssm_number',
-        'ssm_document_path',
+        'company_registration_number',
+        'company_registration_document_path',
         'industry',
         'company_size',
         'company_type',
@@ -25,21 +26,15 @@ class Company extends Model
         'twitter',
         'instagram',
         'youtube',
+        'linkedin',
+        'invite_token',
     ];
 
     /**
      * The owner of the company.
      */
-    public function owner()
+    public function users()
     {
-        return $this->belongsToMany(User::class, 'company_owners', 'company_id', 'user_id')->withTimestamps();
-    }
-
-    /**
-     * The editors of the company.
-     */
-    public function editors()
-    {
-        return $this->belongsToMany(User::class, 'company_editors', 'company_id', 'user_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'company_user', 'company_id', 'user_id')->using(CompanyUser::class)->withPivot('role')->withTimestamps();
     }
 }

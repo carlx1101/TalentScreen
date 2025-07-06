@@ -21,7 +21,7 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company): bool
     {
-        return $user->can('view company') && $user->ownedCompanies()->where('company_id', $company->id)->exists();
+        return $user->can('view company') && $user->companies()->where('company_id', $company->id)->exists();
     }
 
     /**
@@ -37,7 +37,7 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company): bool
     {
-        return $user->can('edit company') && $user->ownedCompanies()->where('company_id', $company->id)->exists();
+        return $user->can('edit company') && $user->companies()->where('company_id', $company->id)->exists();
     }
 
     /**

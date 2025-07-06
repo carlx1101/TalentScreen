@@ -21,7 +21,7 @@ class EnsureOnboarded
         }
 
         if ($user->hasRole('company owner')) {
-            if ($user->ownedCompanies()->count() === 0) {
+            if ($user->companies()->count() === 0) {
                 return redirect()->route('onboarding');
             }
         }

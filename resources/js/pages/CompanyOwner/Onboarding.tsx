@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { defineStepper } from '@stepperize/react';
 import { FilePond, registerPlugin } from 'react-filepond';
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginImageValidateSize from 'filepond-plugin-image-validate-size';
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 
@@ -16,13 +17,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 
 // Register FilePond plugins
-registerPlugin(FilePondPluginFileValidateSize, FilePondPluginFileValidateType, FilePondPluginImagePreview);
+registerPlugin(FilePondPluginFileValidateSize, FilePondPluginFileValidateType, FilePondPluginImagePreview, FilePondPluginImageValidateSize);
 
 interface OnboardingData {
   // Step 1
   company_name: string;
-  ssm_number: string;
-  ssm_document: File | null;
+  company_registration_number: string;
+  company_registration_document: File | null;
 
   // Step 2
   industry: string;
@@ -40,7 +41,11 @@ interface OnboardingData {
   logo: File | null;
   banner: File | null;
   website: string;
-  social_media: string;
+  facebook: string;
+  twitter: string;
+  instagram: string;
+  youtube: string;
+  linkedin: string;
 
   // Step 5
   team_members: string[];
@@ -93,7 +98,7 @@ const countries = [
 
 // Define the stepper steps
 const stepper = defineStepper(
-  { id: 'company-info', title: 'Company Information', description: 'Basic company details and SSM registration' },
+  { id: 'company-info', title: 'Company Information', description: 'Basic company details and company registration' },
   { id: 'company-profile', title: 'Company Profile', description: 'Industry and company characteristics' },
   { id: 'company-address', title: 'Company Address', description: 'Physical location and contact details' },
   { id: 'company-branding', title: 'Company Branding', description: 'Logo, banner, and online presence' },
@@ -103,12 +108,12 @@ const stepper = defineStepper(
 export default function Onboarding() {
   const [teamMembers, setTeamMembers] = useState<string[]>(['']);
   const { current, next, prev, isFirst, isLast, goTo } = stepper.useStepper();
-
+  const formRef = useRef<HTMLFormElement>(null);
   const { data, setData, post, processing, errors } = useForm<OnboardingData>({
     // Step 1
     company_name: '',
-    ssm_number: '',
-    ssm_document: null,
+    company_registration_number: '',
+    company_registration_document: null,
 
     // Step 2
     industry: '',
@@ -126,14 +131,19 @@ export default function Onboarding() {
     logo: null,
     banner: null,
     website: '',
-    social_media: '',
+    facebook: '',
+    twitter: '',
+    instagram: '',
+    youtube: '',
+    linkedin: '',
 
     // Step 5
     team_members: []
   });
 
   const handleNext = () => {
-    if (!isLast) {
+    console.log(formRef.current);
+    if (!isLast && formRef.current?.reportValidity()) {
       next();
     }
   };
@@ -183,7 +193,7 @@ export default function Onboarding() {
         return (
           <div className="space-y-6">
             <div>
-              <Label htmlFor="company_name">Company Name</Label>
+              <Label htmlFor="company_name">Company Name <span className="text-destructive">*</span></Label>
               <Input
                 id="company_name"
                 value={data.company_name}
@@ -198,34 +208,39 @@ export default function Onboarding() {
             </div>
 
             <div>
-              <Label htmlFor="ssm_number">SSM Number</Label>
+              <Label htmlFor="company_registration_number">Company Registration Number <span className="text-destructive">*</span></Label>
               <Input
-                id="ssm_number"
-                value={data.ssm_number}
-                onChange={(e) => setData('ssm_number', e.target.value)}
-                placeholder="Enter SSM registration number"
+                id="company_registration_number"
+                value={data.company_registration_number}
+                onChange={(e) => setData('company_registration_number', e.target.value)}
+                placeholder="Enter Company Registration number"
                 className="mt-1"
                 required
               />
-              {errors.ssm_number && (
-                <p className="text-sm text-destructive mt-1">{errors.ssm_number}</p>
+              {errors.company_registration_number && (
+                <p className="text-sm text-destructive mt-1">{errors.company_registration_number}</p>
               )}
             </div>
 
             <div>
-              <Label>SSM Document (PDF only, max 5MB)</Label>
-              <FilePond
-                files={data.ssm_document ? [data.ssm_document] : []}
-                onupdatefiles={(files) => setData('ssm_document', files[0]?.file as File || null)}
-                acceptedFileTypes={['application/pdf']}
-                maxFileSize="5MB"
-                labelIdle="Drag & Drop your SSM document or <span class='filepond--label-action'>Browse</span>"
-                className="mt-1"
-                credits={false}
-                required
-              />
-              {errors.ssm_document && (
-                <p className="text-sm text-destructive mt-1">{errors.ssm_document}</p>
+              <Label>Company Registration Document (PDF only, max 5MB) <span className="text-destructive">*</span></Label>
+              <div className="relative">
+                {!data.company_registration_document && (
+                  <input type="file" className='absolute top-0 left-0 w-full h-full opacity-0' required />
+                )}
+                <FilePond
+                  files={data.company_registration_document ? [data.company_registration_document] : []}
+                  onupdatefiles={(files) => setData('company_registration_document', files[0]?.file as File || null)}
+                  acceptedFileTypes={['application/pdf']}
+                  maxFileSize="5MB"
+                  labelIdle="Drag & Drop your Company Registration document or <span class='filepond--label-action'>Browse</span>"
+                  className="mt-1"
+                  credits={false}
+                  required
+                />
+              </div>
+              {errors.company_registration_document && (
+                <p className="text-sm text-destructive mt-1">{errors.company_registration_document}</p>
               )}
             </div>
           </div>
@@ -235,14 +250,14 @@ export default function Onboarding() {
         return (
           <div className="space-y-6">
             <div>
-              <Label htmlFor="industry">Industry</Label>
-              <Select value={data.industry} onValueChange={(value) => setData('industry', value)} required>
+              <Label htmlFor="industry">Industry <span className="text-destructive">*</span></Label>
+              <Select key="test" value={data.industry || undefined} onValueChange={(value) => setData('industry', value)} required>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select your industry" />
                 </SelectTrigger>
                 <SelectContent>
                   {industries.map((industry) => (
-                    <SelectItem key={industry} value={industry}>
+                    <SelectItem key={industry} value={industry.toString()}>
                       {industry}
                     </SelectItem>
                   ))}
@@ -254,8 +269,8 @@ export default function Onboarding() {
             </div>
 
             <div>
-              <Label htmlFor="company_size">Company Size</Label>
-              <Select value={data.company_size} onValueChange={(value) => setData('company_size', value)}>
+              <Label htmlFor="company_size">Company Size <span className="text-destructive">*</span></Label>
+              <Select value={data.company_size || undefined} onValueChange={(value) => setData('company_size', value)} required>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select company size" />
                 </SelectTrigger>
@@ -273,8 +288,8 @@ export default function Onboarding() {
             </div>
 
             <div>
-              <Label htmlFor="company_type">Company Type</Label>
-              <Select value={data.company_type} onValueChange={(value) => setData('company_type', value)}>
+              <Label htmlFor="company_type">Company Type <span className="text-destructive">*</span></Label>
+              <Select value={data.company_type || undefined} onValueChange={(value) => setData('company_type', value)} required>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select company type" />
                 </SelectTrigger>
@@ -297,13 +312,14 @@ export default function Onboarding() {
         return (
           <div className="space-y-6">
             <div>
-              <Label htmlFor="address">Address</Label>
+              <Label htmlFor="address">Address <span className="text-destructive">*</span></Label>
               <Input
                 id="address"
                 value={data.address}
                 onChange={(e) => setData('address', e.target.value)}
                 placeholder="Enter street address"
                 className="mt-1"
+                required
               />
               {errors.address && (
                 <p className="text-sm text-destructive mt-1">{errors.address}</p>
@@ -357,7 +373,7 @@ export default function Onboarding() {
 
               <div>
                 <Label htmlFor="country">Country</Label>
-                <Select value={data.country} onValueChange={(value) => setData('country', value)}>
+                <Select value={data.country || undefined} onValueChange={(value) => setData('country', value)}>
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
@@ -390,29 +406,35 @@ export default function Onboarding() {
         return (
           <div className="space-y-6">
             <div>
-              <Label>Company Logo (3MB max, 500x500px recommended)</Label>
-              <FilePond
-                files={data.logo ? [data.logo] : []}
-                onupdatefiles={(files) => setData('logo', files[0]?.file as File || null)}
-                acceptedFileTypes={['image/*']}
-                maxFileSize="3MB"
-                labelIdle="Drag & Drop your company logo or <span class='filepond--label-action'>Browse</span>"
-                className="mt-1"
-                credits={false}
-              />
+              <Label>Company Logo (3MB max) <span className="text-destructive">*</span></Label>
+              <div className="relative">
+                {!data.logo && (
+                  <input type="file" className='absolute top-0 left-0 w-full h-full opacity-0' required />
+                )}
+                <FilePond
+                  files={data.logo ? [data.logo] : []}
+                  onupdatefiles={(files) => setData('logo', files[0]?.file as File || null)}
+                  acceptedFileTypes={['image/*']}
+                  maxFileSize="3MB"
+                  labelIdle="Drag & Drop your company logo (500x500px) or <span class='filepond--label-action'>Browse</span>"
+                  className="mt-1"
+                  credits={false}
+                  required
+                />
+              </div>
               {errors.logo && (
                 <p className="text-sm text-destructive mt-1">{errors.logo}</p>
               )}
             </div>
 
             <div>
-              <Label>Company Banner (5MB max, 1200x300px recommended)</Label>
+              <Label>Company Banner (5MB max)</Label>
               <FilePond
                 files={data.banner ? [data.banner] : []}
                 onupdatefiles={(files) => setData('banner', files[0]?.file as File || null)}
                 acceptedFileTypes={['image/*']}
                 maxFileSize="5MB"
-                labelIdle="Drag & Drop your company banner or <span class='filepond--label-action'>Browse</span>"
+                labelIdle="Drag & Drop your company banner (1200x300px) or <span class='filepond--label-action'>Browse</span>"
                 className="mt-1"
                 credits={false}
               />
@@ -421,34 +443,97 @@ export default function Onboarding() {
               )}
             </div>
 
-            <div>
-              <Label htmlFor="website">Website URL</Label>
-              <Input
-                id="website"
-                type="url"
-                value={data.website}
-                onChange={(e) => setData('website', e.target.value)}
-                placeholder="https://yourcompany.com"
-                className="mt-1"
-              />
-              {errors.website && (
-                <p className="text-sm text-destructive mt-1">{errors.website}</p>
-              )}
-            </div>
 
-            <div>
-              <Label htmlFor="social_media">Social Media Link</Label>
-              <Input
-                id="social_media"
-                type="url"
-                value={data.social_media}
-                onChange={(e) => setData('social_media', e.target.value)}
-                placeholder="https://linkedin.com/company/yourcompany"
-                className="mt-1"
-              />
-              {errors.social_media && (
-                <p className="text-sm text-destructive mt-1">{errors.social_media}</p>
-              )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="website">Website URL</Label>
+                <Input
+                  id="website"
+                  type="url"
+                  value={data.website}
+                  onChange={(e) => setData('website', e.target.value)}
+                  placeholder="https://yourcompany.com"
+                  className="mt-1"
+                />
+                {errors.website && (
+                  <p className="text-sm text-destructive mt-1">{errors.website}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="facebook">Facebook URL</Label>
+                <Input
+                  id="facebook"
+                  type="url"
+                  value={data.facebook}
+                  onChange={(e) => setData('facebook', e.target.value)}
+                  placeholder="https://facebook.com/yourcompany"
+                  className="mt-1"
+                />
+                {errors.facebook && (
+                  <p className="text-sm text-destructive mt-1">{errors.facebook}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="twitter">Twitter URL</Label>
+                <Input
+                  id="twitter"
+                  type="url"
+                  value={data.twitter}
+                  onChange={(e) => setData('twitter', e.target.value)}
+                  placeholder="https://twitter.com/yourcompany"
+                  className="mt-1"
+                />
+                {errors.twitter && (
+                  <p className="text-sm text-destructive mt-1">{errors.twitter}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="instagram">Instagram URL</Label>
+                <Input
+                  id="instagram"
+                  type="url"
+                  value={data.instagram}
+                  onChange={(e) => setData('instagram', e.target.value)}
+                  placeholder="https://instagram.com/yourcompany"
+                  className="mt-1"
+                />
+                {errors.instagram && (
+                  <p className="text-sm text-destructive mt-1">{errors.instagram}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="youtube">YouTube URL</Label>
+                <Input
+                  id="youtube"
+                  type="url"
+                  value={data.youtube}
+                  onChange={(e) => setData('youtube', e.target.value)}
+                  placeholder="https://youtube.com/@yourcompany"
+                  className="mt-1"
+                />
+                {errors.youtube && (
+                  <p className="text-sm text-destructive mt-1">{errors.youtube}</p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="linkedin">LinkedIn URL</Label>
+                <Input
+                  id="linkedin"
+                  type="url"
+                  value={data.linkedin}
+                  onChange={(e) => setData('linkedin', e.target.value)}
+                  placeholder="https://linkedin.com/company/yourcompany"
+                  className="mt-1"
+                />
+                {errors.linkedin && (
+                  <p className="text-sm text-destructive mt-1">{errors.linkedin}</p>
+                )}
+              </div>
             </div>
           </div>
         );
@@ -539,7 +624,6 @@ export default function Onboarding() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Custom Circular Stepper */}
               {/* Desktop Stepper */}
               <div className="hidden md:flex justify-between items-center mb-12 w-full overflow-x-auto">
                 {stepper.steps.map((step, index) => {
@@ -549,7 +633,15 @@ export default function Onboarding() {
                     <React.Fragment key={step.id}>
                       <button
                         type="button"
-                        onClick={() => goTo(step.id)}
+                        onClick={() => {
+                          if (!(stepper.utils.getIndex(current.id) > index)) {
+                            if (formRef.current?.reportValidity()) {
+                              goTo(step.id)
+                            }
+                          } else {
+                            goTo(step.id)
+                          }
+                        }}
                         className="flex flex-col items-center focus:outline-none group"
                         aria-current={isActive ? 'step' : undefined}
                       >
@@ -611,7 +703,9 @@ export default function Onboarding() {
 
               {/* Step Content */}
               <div className="mb-8">
-                {renderStepContent()}
+                <form ref={formRef}>
+                  {renderStepContent()}
+                </form>
               </div>
 
               {/* Navigation Buttons */}

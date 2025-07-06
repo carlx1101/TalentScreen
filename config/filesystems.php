@@ -47,6 +47,15 @@ return [
             'report' => false,
         ],
 
+        'company_registration_documents' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/company-registration-documents'),
+            'url' => env('APP_URL').'/company-registration-documents',
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

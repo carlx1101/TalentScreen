@@ -10,21 +10,22 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
-            $table->string('ssm_number');
-            $table->string('ssm_document_path');
+            $table->string('company_registration_number');
+            $table->string('company_registration_document_path');
             $table->string('industry');
-            $table->string('company_size')->nullable();
-            $table->string('company_type')->nullable();
-            $table->string('address')->nullable();
-            $table->string('logo_path')->nullable();
+            $table->string('company_size');
+            $table->string('company_type');
+            $table->text('address');
+            $table->string('logo_path');
             $table->string('banner_path')->nullable();
-            $table->string('website')->nullable();
-            $table->string('facebook')->nullable();
-            $table->string('twitter')->nullable();
-            $table->string('instagram')->nullable();
-            $table->string('youtube')->nullable();
+            $table->text('website')->nullable();
+            $table->text('facebook')->nullable();
+            $table->text('twitter')->nullable();
+            $table->text('instagram')->nullable();
+            $table->text('youtube')->nullable();
+            $table->text('linkedin')->nullable();
+            $table->text('invite_token');
             $table->timestamps();
         });
     }

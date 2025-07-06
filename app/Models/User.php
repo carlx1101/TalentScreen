@@ -3,15 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\CompanyUser;
 use Laravel\Cashier\Billable;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\HasProfilePhoto;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -73,24 +74,12 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function company()
+    /**
+     * Company relationship.
+     */
+    public function companies()
     {
-        return $this->hasOne(Company::class, 'owner_id', 'id');
+        return $this->belongsToMany(Company::class, 'company_user', 'user_id', 'company_id')->using(CompanyUser::class)->withPivot('role')->withTimestamps();
     }
 
-    /**
-     * Companies this user owns.
-     */
-    public function ownedCompanies()
-    {
-        return $this->belongsToMany(Company::class, 'company_owners', 'user_id', 'company_id')->withTimestamps();
-    }
-
-    /**
-     * Companies this user is an editor of.
-     */
-    public function editorCompanies()
-    {
-        return $this->belongsToMany(Company::class, 'company_editors', 'user_id', 'company_id')->withTimestamps();
-    }
 }

@@ -56,7 +56,12 @@ class UsersController extends Controller
 {
     public function index()
     {
+        // Spatie permission
+        if (auth()->user()->can('manage roles')) {}
+        // Laravel authorization (gate/policy)
         $this->authorize('viewAny', User::class);
+        // Currently spatie permission is added to the policy, can add on top of the permission to create more complex rules
+
 
         return Inertia::render('Users/Index', [
             'can' => [

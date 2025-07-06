@@ -12,6 +12,7 @@ use App\Http\Controllers\BrowserSessionController;
 use App\Http\Controllers\ProfileSettingsController;
 use App\Http\Controllers\CompanyOwner\OnboardingController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\StorageController;
 
 /*
  * Public routes
@@ -33,7 +34,8 @@ Route::get('/', function () {
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
 
-Route::get('/test', [TestController::class, 'test'])->name('test');
+// Storage Routes, to return the files as json response for private folder
+Route::get('/company-registration-documents/{path}', [StorageController::class, 'companyRegistrationDocuments'])->name('company-registration-documents.show');
 
 /*
  * Utility routes
@@ -133,5 +135,9 @@ Route::middleware([
     });
 });
 
-// include the jetstream routes
+/*
+ * Jetstream routes
+ *
+ * Override the jetstream routes to include the ensure_onboarded middleware
+ */
 require __DIR__.'/jetstream.php';

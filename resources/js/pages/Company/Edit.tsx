@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { FilePond, registerPlugin } from 'react-filepond';
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginImageValidateSize from 'filepond-plugin-image-validate-size';
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 
@@ -12,18 +13,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { toast } from 'sonner';
 import { type Company } from '@/types';
 
 // Register FilePond plugins
-registerPlugin(FilePondPluginFileValidateSize, FilePondPluginFileValidateType, FilePondPluginImagePreview);
+registerPlugin(FilePondPluginFileValidateSize, FilePondPluginFileValidateType, FilePondPluginImagePreview, FilePondPluginImageValidateSize);
 
 interface EditCompanyData {
     name: string;
-    ssm_number: string;
+    company_registration_number: string;
     industry: string;
     company_size: string;
     company_type: string;
@@ -33,10 +33,14 @@ interface EditCompanyData {
     twitter: string;
     instagram: string;
     youtube: string;
-    ssm_document: File | null;
+    company_registration_document: File | null;
     logo: File | null;
     banner: File | null;
-    method: 'put';
+    removed_company_registration_document: boolean;
+    removed_logo: boolean;
+    removed_banner: boolean;
+    test: string;
+    _method: 'put';
 }
 
 const industries = [
@@ -90,7 +94,7 @@ interface Props {
 export default function EditCompany({ company }: Props) {
     const { data, setData, post, processing, errors } = useForm<Required<EditCompanyData>>({
         name: company.name || '',
-        ssm_number: company.ssm_number || '',
+        company_registration_number: company.company_registration_number || '',
         industry: company.industry || '',
         company_size: company.company_size || '',
         company_type: company.company_type || '',
@@ -100,10 +104,14 @@ export default function EditCompany({ company }: Props) {
         twitter: company.twitter || '',
         instagram: company.instagram || '',
         youtube: company.youtube || '',
-        ssm_document: null,
+        company_registration_document: null,
         logo: null,
         banner: null,
-        method: 'put'
+        removed_company_registration_document: false,
+        removed_logo: false,
+        removed_banner: false,
+        test: 'test',
+        _method: 'put'
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -144,7 +152,7 @@ export default function EditCompany({ company }: Props) {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <Label htmlFor="name">Company Name</Label>
+                                            <Label htmlFor="name">Company Name <span className="text-destructive">*</span></Label>
                                             <Input
                                                 id="name"
                                                 value={data.name}
@@ -159,24 +167,24 @@ export default function EditCompany({ company }: Props) {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="ssm_number">SSM Number</Label>
+                                            <Label htmlFor="company_registration_number">Company Registration Number <span className="text-destructive">*</span></Label>
                                             <Input
-                                                id="ssm_number"
-                                                value={data.ssm_number}
-                                                onChange={(e) => setData('ssm_number', e.target.value)}
-                                                placeholder="Enter SSM registration number"
+                                                id="company_registration_number"
+                                                value={data.company_registration_number}
+                                                onChange={(e) => setData('company_registration_number', e.target.value)}
+                                                placeholder="Enter Company Registration number"
                                                 className="mt-1"
                                                 required
                                             />
-                                            {errors.ssm_number && (
-                                                <p className="text-sm text-destructive mt-1">{errors.ssm_number}</p>
+                                            {errors.company_registration_number && (
+                                                <p className="text-sm text-destructive mt-1">{errors.company_registration_number}</p>
                                             )}
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div>
-                                            <Label htmlFor="industry">Industry</Label>
+                                            <Label htmlFor="industry">Industry <span className="text-destructive">*</span></Label>
                                             <Select value={data.industry} onValueChange={(value) => setData('industry', value)} required>
                                                 <SelectTrigger className="mt-1">
                                                     <SelectValue placeholder="Select your industry" />
@@ -195,8 +203,8 @@ export default function EditCompany({ company }: Props) {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="company_size">Company Size</Label>
-                                            <Select value={data.company_size} onValueChange={(value) => setData('company_size', value)}>
+                                            <Label htmlFor="company_size">Company Size <span className="text-destructive">*</span></Label>
+                                            <Select value={data.company_size} onValueChange={(value) => setData('company_size', value)} required>
                                                 <SelectTrigger className="mt-1">
                                                     <SelectValue placeholder="Select company size" />
                                                 </SelectTrigger>
@@ -214,8 +222,8 @@ export default function EditCompany({ company }: Props) {
                                         </div>
 
                                         <div>
-                                            <Label htmlFor="company_type">Company Type</Label>
-                                            <Select value={data.company_type} onValueChange={(value) => setData('company_type', value)}>
+                                            <Label htmlFor="company_type">Company Type <span className="text-destructive">*</span></Label>
+                                            <Select value={data.company_type} onValueChange={(value) => setData('company_type', value)} required>
                                                 <SelectTrigger className="mt-1">
                                                     <SelectValue placeholder="Select company type" />
                                                 </SelectTrigger>
@@ -234,13 +242,14 @@ export default function EditCompany({ company }: Props) {
                                     </div>
 
                                     <div>
-                                        <Label htmlFor="address">Address</Label>
+                                        <Label htmlFor="address">Address <span className="text-destructive">*</span></Label>
                                         <Input
                                             id="address"
                                             value={data.address}
                                             onChange={(e) => setData('address', e.target.value)}
                                             placeholder="Enter company address"
                                             className="mt-1"
+                                            required
                                         />
                                         {errors.address && (
                                             <p className="text-sm text-destructive mt-1">{errors.address}</p>
@@ -337,46 +346,100 @@ export default function EditCompany({ company }: Props) {
                                     <h3 className="text-lg font-semibold">Documents & Media</h3>
 
                                     <div>
-                                        <Label>SSM Document (PDF only, max 5MB)</Label>
-                                        <FilePond
-                                            files={data.ssm_document ? [data.ssm_document] : []}
-                                            onupdatefiles={(files) => setData('ssm_document', files[0]?.file as File || null)}
-                                            acceptedFileTypes={['application/pdf']}
-                                            maxFileSize="5MB"
-                                            labelIdle="Drag & Drop your SSM document or <span class='filepond--label-action'>Browse</span>"
-                                            className="mt-1"
-                                            credits={false}
-                                        />
-                                        {errors.ssm_document && (
-                                            <p className="text-sm text-destructive mt-1">{errors.ssm_document}</p>
+                                        <Label>Company Registration Document (PDF only, max 5MB) <span className="text-destructive">*</span></Label>
+                                        <div className="relative">
+                                          {!data.company_registration_document && (
+                                              <input
+                                                type="file"
+                                                className='absolute top-0 left-0 w-full h-full opacity-0'
+                                                required
+                                              />
+                                          )}
+                                          <FilePond
+                                              files={company.company_registration_document_path ? [{
+                                                  source: route('company-registration-documents.show', company.company_registration_document_path),
+                                                  options: {
+                                                      type: 'local'
+                                                  }
+                                              }] : []}
+                                              onremovefile={() => {
+                                                  setData('removed_company_registration_document', true);
+                                              }}
+                                              onupdatefiles={(files) => setData('company_registration_document', files[0]?.file as File || null)}
+                                              acceptedFileTypes={['application/pdf']}
+                                              maxFileSize="5MB"
+                                              labelIdle="Drag & Drop your Company Registration document or <span class='filepond--label-action'>Browse</span>"
+                                              className="mt-1"
+                                              credits={false}
+                                              server={{
+                                                load: (source, load) => {
+                                                  fetch(source).then(res => res.blob()).then(load);
+                                                },
+                                              }}
+                                              required
+                                          />
+                                        </div>
+                                        {errors.company_registration_document && (
+                                            <p className="text-sm text-destructive mt-1">{errors.company_registration_document}</p>
                                         )}
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <Label>Company Logo (3MB max, 500x500px recommended)</Label>
-                                            <FilePond
-                                                files={data.logo ? [data.logo] : []}
-                                                onupdatefiles={(files) => setData('logo', files[0]?.file as File || null)}
-                                                acceptedFileTypes={['image/*']}
-                                                maxFileSize="3MB"
-                                                labelIdle="Drag & Drop your company logo or <span class='filepond--label-action'>Browse</span>"
-                                                className="mt-1"
-                                                credits={false}
-                                            />
+                                            <Label>Company Logo (3MB max) <span className="text-destructive">*</span></Label>
+                                            <div className="relative">
+                                              {!data.logo && (
+                                                  <input
+                                                    type="file"
+                                                    className='absolute top-0 left-0 w-full h-full opacity-0'
+                                                    required
+                                                  />
+                                              )}
+                                              <FilePond
+                                                  files={company.logo_path ? [{
+                                                      source: '/storage/' + company.logo_path,
+                                                      options: {
+                                                          type: 'input'
+                                                      }
+                                                  }] : []}
+                                                  onremovefile={() => {
+                                                      setData('removed_logo', true);
+                                                  }}
+                                                  onupdatefiles={(files) => setData('logo', files[0]?.file as File || null)}
+                                                  acceptedFileTypes={['image/*']}
+                                                  maxFileSize="3MB"
+                                                  labelIdle="Drag & Drop your company logo (500x500px) or <span class='filepond--label-action'>Browse</span>"
+                                                  className="mt-1"
+                                                  credits={false}
+                                                  required
+                                              />
+                                            </div>
                                             {errors.logo && (
                                                 <p className="text-sm text-destructive mt-1">{errors.logo}</p>
                                             )}
                                         </div>
 
                                         <div>
-                                            <Label>Company Banner (5MB max, 1200x400px recommended)</Label>
+                                            <Label>Company Banner (5MB max)</Label>
                                             <FilePond
-                                                files={data.banner ? [data.banner] : []}
+                                                files={company.banner_path ? [{
+                                                    source: '/storage/' + company.banner_path,
+                                                    options: {
+                                                        type: 'local'
+                                                    }
+                                                }] : []}
+                                                server={{
+                                                  load: (source, load) => {
+                                                    fetch(source).then(res => res.blob()).then(load);
+                                                  },
+                                                }}
+                                                onremovefile={() => {
+                                                    setData('removed_banner', true);
+                                                }}
                                                 onupdatefiles={(files) => setData('banner', files[0]?.file as File || null)}
                                                 acceptedFileTypes={['image/*']}
                                                 maxFileSize="5MB"
-                                                labelIdle="Drag & Drop your company banner or <span class='filepond--label-action'>Browse</span>"
+                                                labelIdle="Drag & Drop your company banner (1200x300px) or <span class='filepond--label-action'>Browse</span>"
                                                 className="mt-1"
                                                 credits={false}
                                             />

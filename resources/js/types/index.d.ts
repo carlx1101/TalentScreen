@@ -86,8 +86,8 @@ export interface User {
 export interface Company {
   id: number;
   name: string;
-  ssm_number: string;
-  ssm_document_path: string;
+  company_registration_number: string;
+  company_registration_document_path: string;
   industry: string;
   company_size: string | null;
   company_type: string | null;

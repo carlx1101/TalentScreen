@@ -24,7 +24,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './dropdown-menu';
-import { Separator } from './separator';
 import { cn } from '@/lib/utils';
 import {
   RxFontBold,
@@ -53,6 +52,7 @@ import {
 import { Input } from './input';
 import { CheckIcon } from 'lucide-react';
 import Link from '@tiptap/extension-link';
+import Placeholder from '@tiptap/extension-placeholder';
 import { TbClearFormatting } from 'react-icons/tb';
 
 // Import languages for syntax highlighting
@@ -115,6 +115,9 @@ export function RichTextEditor({
         },
         openOnClick: false,
       }),
+      Placeholder.configure({
+        placeholder,
+      }),
     ],
     content,
     editable,
@@ -142,6 +145,12 @@ export function RichTextEditor({
     '#94a3b8', '#60a5fa', '#67e8f9', '#5eead4', '#fde68a', '#fca5a5', '#c4b5fd',
   ];
   const currentColor = editor && editor.getAttributes('textStyle').color;
+
+  useEffect(() => {
+    if (bubbleMenuVisible && editor?.isActive('link')) {
+      setBubbleLinkUrl(editor.getAttributes('link').href || '');
+    }
+  }, [bubbleMenuVisible, editor]);
 
   if (!editor) {
     return null;
@@ -452,14 +461,6 @@ export function RichTextEditor({
           shouldShow={({ editor }) => editor.isActive('link')}
           className="z-50"
         >
-          {(() => {
-            useEffect(() => {
-              if (bubbleMenuVisible && editor.isActive('link')) {
-                setBubbleLinkUrl(editor.getAttributes('link').href || '');
-              }
-            }, [bubbleMenuVisible, editor]);
-            return null;
-          })()}
           <div className="flex flex-col gap-2 bg-white border border-input rounded-md shadow-lg p-3 min-w-[220px]">
             <Input
               value={bubbleLinkUrl}
@@ -489,7 +490,7 @@ export function RichTextEditor({
                       textArea.select();
                       try {
                         document.execCommand('copy');
-                      } catch (err) {}
+                      } catch { /* ignore */ }
                       document.body.removeChild(textArea);
                     }
                   }

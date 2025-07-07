@@ -37,6 +37,8 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 // Storage Routes, to return the files as json response for private folder
 Route::get('/company-registration-documents/{path}', [StorageController::class, 'companyRegistrationDocuments'])->name('company-registration-documents.show');
 
+Route::get('/test', [TestController::class, 'test'])->name('test');
+
 /*
  * Utility routes
  *
@@ -94,9 +96,7 @@ Route::middleware([
     'verified',
     'role:company owner',
 ])->prefix('company-owner')->group(function () {
-    Route::get('/onboarding', function () {
-        return Inertia::render('CompanyOwner/Onboarding');
-    })->name('onboarding');
+    Route::get('/onboarding', [OnboardingController::class, 'index'])->name('onboarding');
     Route::post('/onboarding', [OnboardingController::class, 'store'])->name('onboarding.store');
 });
 

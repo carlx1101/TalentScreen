@@ -29,7 +29,7 @@ class CompanyPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create company');
+        return $user->can('create company') && $user->companies()->count() < 1;
     }
 
     /**

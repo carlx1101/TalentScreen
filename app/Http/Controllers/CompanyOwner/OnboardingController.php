@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\CompanyOwner;
 
 use App\Models\User;
+use Inertia\Inertia;
 use App\Models\Company;
 use App\Models\CompanyUser;
 use Illuminate\Support\Str;
@@ -24,8 +25,15 @@ class OnboardingController extends Controller
         return $token;
     }
 
+    public function index()
+    {
+        $this->authorize('create', Company::class);
+        return Inertia::render('CompanyOwner/Onboarding');
+    }
+
     public function store(Request $request)
     {
+        $this->authorize('create', Company::class);
         $validated = $request->validate([
             // Required fields (NOT NULL in migration)
             'company_name' => 'required|string|max:255', // name

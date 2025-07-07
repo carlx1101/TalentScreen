@@ -19,6 +19,10 @@ return new class extends Migration
             $table->string('mode');
             $table->string('skills');
             $table->string('languages');
+            $table->text('location');
+            $table->string('salary_currency');
+            $table->string('salary_min');
+            $table->string('salary_max');
             $table->timestamps();
         });
     }

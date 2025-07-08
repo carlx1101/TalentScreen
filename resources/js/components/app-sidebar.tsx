@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Shield, Building2 } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, Shield, Building2, Briefcase } from 'lucide-react';
 import AppLogo from './app-logo';
 import { SharedData } from '@/types';
 
@@ -27,6 +27,14 @@ export function AppSidebar() {
             title: 'Company',
             href: '/company/edit',
             icon: Building2,
+        });
+    }
+
+    if (permissions.includes('view job listings')) {
+        mainNavItems.push({
+            title: 'Job Listings',
+            href: '/job-listings',
+            icon: Briefcase,
         });
     }
 

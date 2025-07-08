@@ -13,7 +13,7 @@ class CompanyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view all companies');
+        return $user->can('manage all companies');
     }
 
     /**

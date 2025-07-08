@@ -17,6 +17,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.21",
         "laravel/tinker": "^2.10.1",
+        "overtrue/laravel-versionable": "^5.5",
         "spatie/laravel-permission": "^6.0",
         "spatie/laravel-sitemap": "^7.3",
         "tightenco/ziggy": "^2.0"

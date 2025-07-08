@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('password')->nullable()->change();
+        Schema::create('employment_benefits', function (Blueprint $table) {
+            $table->id();
+            $table->string('icon_path');
+            $table->string('name');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -21,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('password')->nullable(false)->change();
-        });
+        Schema::dropIfExists('employment_benefits');
     }
 };

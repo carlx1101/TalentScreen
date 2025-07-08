@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\User;
+use App\Models\JobListing;
 use App\Models\CompanyUser;
 use Illuminate\Database\Eloquent\Model;
+use Overtrue\LaravelVersionable\Versionable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\User;
 
 class Company extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -36,5 +40,10 @@ class Company extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'company_user', 'company_id', 'user_id')->using(CompanyUser::class)->withPivot('role')->withTimestamps();
+    }
+
+    public function jobListings()
+    {
+        return $this->hasMany(JobListing::class);
     }
 }

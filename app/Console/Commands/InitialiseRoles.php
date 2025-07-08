@@ -32,13 +32,19 @@ class InitialiseRoles extends Command
         // Create permissions
         $permissions = [
             'manage roles',
-            'view all companies',
+            'manage all companies',
+            'manage all job listings',
             'view company',
             'create company',
             'edit company',
             'delete company',
             'restore company',
             'invite company editor',
+            'view job listings',
+            'create job listing',
+            'edit job listing',
+            'delete job listing',
+            'restore job listing',
         ];
 
         foreach ($permissions as $permission) {
@@ -50,11 +56,8 @@ class InitialiseRoles extends Command
         $roles = [
             'admin' => [
                 'manage roles',
-                'view all companies',
-                'create company',
-                'edit company',
-                'delete company',
-                'restore company',
+                'manage all companies',
+                'manage all job listings',
             ],
             'company owner' => [
                 'view company',
@@ -63,10 +66,18 @@ class InitialiseRoles extends Command
                 'delete company',
                 'restore company',
                 'invite company editor',
+                'view job listings',
+                'create job listing',
+                'edit job listing',
+                'delete job listing',
             ],
             'company editor' => [
                 'view company',
                 'edit company',
+                'view job listings',
+                'create job listing',
+                'edit job listing',
+                'delete job listing',
             ],
         ];
 

@@ -14,10 +14,10 @@ return new class extends Migration
             $table->string('company_registration_number');
             $table->string('company_registration_document_path');
             $table->string('industry');
-            $table->string('company_size');
-            $table->string('company_type');
-            $table->text('address');
-            $table->string('logo_path');
+            $table->string('company_size')->nullable();
+            $table->string('company_type')->nullable();
+            $table->text('address')->nullable();
+            $table->string('logo_path')->nullable();
             $table->string('banner_path')->nullable();
             $table->text('website')->nullable();
             $table->text('facebook')->nullable();
@@ -27,6 +27,7 @@ return new class extends Migration
             $table->text('linkedin')->nullable();
             $table->text('invite_token');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

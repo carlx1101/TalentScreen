@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('salary_min');
             $table->string('salary_max');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

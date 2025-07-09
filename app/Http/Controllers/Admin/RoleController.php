@@ -17,7 +17,7 @@ class RoleController extends Controller
         $this->authorize('viewAny', Role::class);
 
         $roles = Role::with('permissions')->where('name', '!=', 'admin')->get();
-        $permissions = Permission::where('name', '!=', 'manage roles')->get();
+        $permissions = Permission::all();
 
         return Inertia::render('Admin/RolePermissionManagement', [
             'can' => [
@@ -118,13 +118,6 @@ class RoleController extends Controller
     public function deletePermission(Permission $permission)
     {
         $this->authorize('managePermissions', Role::class);
-
-        // validate permission cannot be manage roles, throw validation error if true
-        if ($permission->name === 'manage roles') {
-            throw ValidationException::withMessages([
-                'permission' => "Permission '{$permission->name}' cannot be deleted",
-            ]);
-        }
 
         $permissionName = $permission->name;
         $permission->delete();

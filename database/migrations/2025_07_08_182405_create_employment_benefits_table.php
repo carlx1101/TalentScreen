@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('employment_benefits', function (Blueprint $table) {
             $table->id();
             $table->string('icon_path');
-            $table->string('name');
+            $table->text('name')->unique();
             $table->timestamps();
             $table->softDeletes();
         });

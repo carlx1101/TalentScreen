@@ -19,6 +19,7 @@ class JobListing extends Model
         'description',
         'employment_type',
         'mode',
+        
     ];
 
     public function company()

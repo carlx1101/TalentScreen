@@ -156,7 +156,7 @@ export default function Onboarding() {
 
   const handleSubmit = () => {
     setData('team_members', teamMembers.filter(email => email.trim() !== ''));
-    post('/company-owner/onboarding', {
+    post('/onboarding', {
       onSuccess: () => {
         toast.success('Company onboarding completed successfully');
       },

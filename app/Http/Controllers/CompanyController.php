@@ -15,11 +15,7 @@ class CompanyController extends Controller
     public function edit(Request $request)
     {
         $user = $request->user();
-        $company = $user->companies()->first();
-
-        if (!$company) {
-            return redirect()->route('dashboard')->with('error', 'No company found.');
-        }
+        $company = $user->companies()->firstOrFail();
 
         $this->authorize('update', $company);
 

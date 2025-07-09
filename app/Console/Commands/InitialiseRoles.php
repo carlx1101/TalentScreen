@@ -31,9 +31,6 @@ class InitialiseRoles extends Command
 
         // Create permissions
         $permissions = [
-            'manage roles',
-            'manage all companies',
-            'manage all job listings',
             'view company',
             'create company',
             'edit company',
@@ -55,9 +52,6 @@ class InitialiseRoles extends Command
         // Create roles and assign permissions
         $roles = [
             'admin' => [
-                'manage roles',
-                'manage all companies',
-                'manage all job listings',
             ],
             'company owner' => [
                 'view company',

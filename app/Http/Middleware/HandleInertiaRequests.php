@@ -34,17 +34,14 @@ class HandleInertiaRequests extends Middleware
 
         if ($user) {
             $viewPermissions = [];
-            if ($user->can('manage all companies')) {
-                array_push($viewPermissions, 'manage all companies');
-            }
             if ($user->can('view company')) {
                 array_push($viewPermissions, 'view company');
             }
             if ($user->can('manage all job listings')) {
                 array_push($viewPermissions, 'manage all job listings');
             }
-            if ($user->can('manage roles')) {
-                array_push($viewPermissions, 'manage roles');
+            if ($user->can('view job listings')) {
+                array_push($viewPermissions, 'view job listings');
             }
         }
 

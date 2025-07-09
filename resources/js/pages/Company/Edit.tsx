@@ -386,7 +386,7 @@ export default function EditCompany({ company }: Props) {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <Label>Company Logo (3MB max) <span className="text-destructive">*</span></Label>
+                                            <Label>Company Logo (3MB max, 500x500px recommended) <span className="text-destructive">*</span></Label>
                                             <div className="relative">
                                               {!data.logo && (
                                                   <input
@@ -408,7 +408,7 @@ export default function EditCompany({ company }: Props) {
                                                   onupdatefiles={(files) => setData('logo', files[0]?.file as File || null)}
                                                   acceptedFileTypes={['image/*']}
                                                   maxFileSize="3MB"
-                                                  labelIdle="Drag & Drop your company logo (500x500px) or <span class='filepond--label-action'>Browse</span>"
+                                                  labelIdle="Drag & Drop your company logo or <span class='filepond--label-action'>Browse</span>"
                                                   className="mt-1"
                                                   credits={false}
                                                   required
@@ -420,7 +420,7 @@ export default function EditCompany({ company }: Props) {
                                         </div>
 
                                         <div>
-                                            <Label>Company Banner (5MB max)</Label>
+                                            <Label>Company Banner (5MB max, 1200x300px recommended)</Label>
                                             <FilePond
                                                 files={company.banner_path ? [{
                                                     source: '/storage/' + company.banner_path,
@@ -439,7 +439,7 @@ export default function EditCompany({ company }: Props) {
                                                 onupdatefiles={(files) => setData('banner', files[0]?.file as File || null)}
                                                 acceptedFileTypes={['image/*']}
                                                 maxFileSize="5MB"
-                                                labelIdle="Drag & Drop your company banner (1200x300px) or <span class='filepond--label-action'>Browse</span>"
+                                                labelIdle="Drag & Drop your company banner or <span class='filepond--label-action'>Browse</span>"
                                                 className="mt-1"
                                                 credits={false}
                                             />

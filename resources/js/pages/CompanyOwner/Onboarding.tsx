@@ -406,7 +406,7 @@ export default function Onboarding() {
         return (
           <div className="space-y-6">
             <div>
-              <Label>Company Logo (3MB max) <span className="text-destructive">*</span></Label>
+              <Label>Company Logo (3MB max, 500x500px recommended) <span className="text-destructive">*</span></Label>
               <div className="relative">
                 {!data.logo && (
                   <input type="file" className='absolute top-0 left-0 w-full h-full opacity-0' required />
@@ -416,7 +416,7 @@ export default function Onboarding() {
                   onupdatefiles={(files) => setData('logo', files[0]?.file as File || null)}
                   acceptedFileTypes={['image/*']}
                   maxFileSize="3MB"
-                  labelIdle="Drag & Drop your company logo (500x500px) or <span class='filepond--label-action'>Browse</span>"
+                  labelIdle="Drag & Drop your company logo or <span class='filepond--label-action'>Browse</span>"
                   className="mt-1"
                   credits={false}
                   required
@@ -428,13 +428,13 @@ export default function Onboarding() {
             </div>
 
             <div>
-              <Label>Company Banner (5MB max)</Label>
+              <Label>Company Banner (5MB max, 1200x300px recommended)</Label>
               <FilePond
                 files={data.banner ? [data.banner] : []}
                 onupdatefiles={(files) => setData('banner', files[0]?.file as File || null)}
                 acceptedFileTypes={['image/*']}
                 maxFileSize="5MB"
-                labelIdle="Drag & Drop your company banner (1200x300px) or <span class='filepond--label-action'>Browse</span>"
+                labelIdle="Drag & Drop your company banner or <span class='filepond--label-action'>Browse</span>"
                 className="mt-1"
                 credits={false}
               />
@@ -579,23 +579,6 @@ export default function Onboarding() {
               </Button>
             </div>
 
-            <div className="rounded-lg border p-4">
-              <h4 className="font-medium mb-2">Or share this link</h4>
-              <div className="flex gap-2">
-                <Input
-                  value={`${window.location.origin}/invite/company`}
-                  readOnly
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigator.clipboard.writeText(`${window.location.origin}/invite/company`)}
-                >
-                  Copy
-                </Button>
-              </div>
-            </div>
           </div>
         );
 

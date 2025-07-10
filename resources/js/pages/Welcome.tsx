@@ -16,15 +16,8 @@ export default function Welcome() {
 
     return (
         <>  
+            <Navbar />
 
-            <Navbar
-                logo={{
-                    url: "https://www.shadcnblocks.com",
-                    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
-                    alt: "logo",
-                    title: "Shadcnblocks.com",
-                }}
-            />
 
             {/* Hero */}
             <div>
@@ -118,8 +111,6 @@ export default function Welcome() {
                 ]}
                 
             />  
-
-
             <Footer />
 
         </>

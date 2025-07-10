@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileSettingsController;
 use App\Http\Controllers\CompanyOwner\OnboardingController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\StorageController;
+use App\Http\Controllers\PageController;
 
 /*
  * Public routes
@@ -30,6 +31,9 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+// Job Search Page
+Route::get('/job-search', [PageController::class, 'jobSearch'])->name('job-search');
+
 // Google OAuth routes
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
@@ -37,7 +41,6 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 // Storage Routes, to return the files as json response for private folder
 Route::get('/company-registration-documents/{path}', [StorageController::class, 'companyRegistrationDocuments'])->name('company-registration-documents.show');
 
-Route::get('/test', [TestController::class, 'test'])->name('test');
 
 /*
  * Utility routes

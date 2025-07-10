@@ -1,4 +1,4 @@
-import { Book, Brain, Briefcase, Building, Menu, Search, Speech, Sunset, Trees, Zap } from "lucide-react";
+import { Book, Brain, Briefcase, Building, GraduationCap, Menu, Search, Speech, Sunset, Trees, Zap } from "lucide-react";
 
 import {
   Accordion,
@@ -67,8 +67,15 @@ const Navbar = ({
           title: "Job Search",
           description: "Find your perfect job opportunity",
           icon: <Search className="size-5 shrink-0" />,
-          url: "#",
+          url: "/job-search",
         },
+        {
+          title: "Internship",
+          description: "Find your perfect internship opportunity",
+          icon: <GraduationCap   className="size-5 shrink-0" />,
+          url: "/job-search?jobType=internship", 
+        },
+        
       ],
     },
     {
@@ -79,13 +86,13 @@ const Navbar = ({
           title: "AI Interview",
           description: "AI-powered interview platform for better hiring",
           icon: <Speech className="size-5 shrink-0" />,
-          url: "#",
+          url: "/home",
         },
         {
           title: "Jobs Ads",
           description: "Post and manage your job advertisements",
           icon: <Briefcase className="size-5 shrink-0" />,
-          url: "#",
+          url: "/dashboard",
         },
       ],
     },
@@ -127,7 +134,7 @@ const Navbar = ({
               </span>
             </a>
             <div className="flex items-center">
-              <NavigationMenu viewport={false}>
+              <NavigationMenu viewport={false} className="z-50">
                 <NavigationMenuList>
                   {menu.map((item) => renderMenuItem(item))}
                 </NavigationMenuList>
@@ -136,7 +143,7 @@ const Navbar = ({
           </div>
           <div className="flex gap-2">
             <Button asChild size="sm">
-              <a href="#">Post Free Jobs Ads</a>
+              <a href="/dashboard">Post Free Jobs Ads</a>
             </Button>
           </div>
         </nav>  
@@ -191,7 +198,7 @@ const renderMenuItem = (item: MenuItem) => {
     return (
       <NavigationMenuItem key={item.title}>
         <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-        <NavigationMenuContent className="bg-popover text-popover-foreground p-4 left-0">
+        <NavigationMenuContent className="bg-popover text-popover-foreground p-4 left-0 z-50">
           <div className="grid w-72 gap-3">
             {item.items.map((subItem) => (
               <NavigationMenuLink asChild key={subItem.title}>

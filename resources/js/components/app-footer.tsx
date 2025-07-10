@@ -27,30 +27,26 @@ interface FooterProps {
 
 const defaultSections = [
   {
-    title: "Product",
+    title: "For Employees",
     links: [
-      { name: "Overview", href: "#" },
-      { name: "Pricing", href: "#" },
-      { name: "Marketplace", href: "#" },
-      { name: "Features", href: "#" },
+      { name: "Job Search", href: "#" },
+      { name: "Internship", href: "#" },  
+    
+    ],
+  },
+  { 
+    title: "For Employers",
+    links: [
+      { name: "AI Interviewer", href: "#" },  
+      { name: "Job Ads", href: "#" },
     ],
   },
   {
-    title: "Company",
+    title: "Company & Resources ", 
     links: [
       { name: "About", href: "#" },
-      { name: "Team", href: "#" },
       { name: "Blog", href: "#" },
-      { name: "Careers", href: "#" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { name: "Help", href: "#" },
-      { name: "Sales", href: "#" },
-      { name: "Advertise", href: "#" },
-      { name: "Privacy", href: "#" },
+
     ],
   },
 ];
@@ -75,9 +71,10 @@ const Footer = ({
     title: "Shadcnblocks.com",
   },
   sections = defaultSections,
-  description = "A collection of components for your startup business or side project.",
+  description = "TalentScreen is a platform that helps you find the right job for you.",
   socialLinks = defaultSocialLinks,
-  copyright = "© 2024 Shadcnblocks.com. All rights reserved.",
+  copyright = "© TALENTSCREEN SDN. BHD. 202501018145 (1619559-P).",
+
   legalLinks = defaultLegalLinks,
 }: FooterProps) => {
   return (

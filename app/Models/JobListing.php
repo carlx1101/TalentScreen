@@ -19,7 +19,25 @@ class JobListing extends Model
         'description',
         'employment_type',
         'mode',
-        
+        'skills',
+        'languages',
+        'location',
+        'salary_currency',
+        'salary_min',
+        'salary_max',
+        'benefits',
+        'is_active',
+        'company_id',
+    ];
+
+    protected $casts = [
+        'mode' => 'array',
+        'skills' => 'array',
+        'languages' => 'array',
+        'benefits' => 'array',
+        'is_active' => 'boolean',
+        'salary_min' => 'integer',
+        'salary_max' => 'integer',
     ];
 
     public function company()

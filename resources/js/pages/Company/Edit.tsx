@@ -78,10 +78,6 @@ const companyTypes = [
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-    {
         title: 'Edit Company',
         href: '/company/edit',
     },
@@ -89,9 +85,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
     company: Company;
+    can: {
+        edit: boolean;
+    };
 }
 
-export default function EditCompany({ company }: Props) {
+export default function EditCompany({ company, can }: Props) {
     const { data, setData, post, processing, errors } = useForm<Required<EditCompanyData>>({
         name: company.name || '',
         company_registration_number: company.company_registration_number || '',
@@ -145,6 +144,13 @@ export default function EditCompany({ company }: Props) {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
+                            {!can.edit && (
+                                <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                                    <p className="text-yellow-800">
+                                        You don't have permission to edit this company information.
+                                    </p>
+                                </div>
+                            )}
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* Basic Information */}
                                 <div className="space-y-4">
@@ -160,6 +166,7 @@ export default function EditCompany({ company }: Props) {
                                                 placeholder="Enter your company name"
                                                 className="mt-1"
                                                 required
+                                                disabled={!can.edit}
                                             />
                                             {errors.name && (
                                                 <p className="text-sm text-destructive mt-1">{errors.name}</p>
@@ -175,6 +182,7 @@ export default function EditCompany({ company }: Props) {
                                                 placeholder="Enter Company Registration number"
                                                 className="mt-1"
                                                 required
+                                                disabled={!can.edit}
                                             />
                                             {errors.company_registration_number && (
                                                 <p className="text-sm text-destructive mt-1">{errors.company_registration_number}</p>
@@ -185,7 +193,7 @@ export default function EditCompany({ company }: Props) {
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div>
                                             <Label htmlFor="industry">Industry <span className="text-destructive">*</span></Label>
-                                            <Select value={data.industry} onValueChange={(value) => setData('industry', value)} required>
+                                            <Select value={data.industry} onValueChange={(value) => setData('industry', value)} required disabled={!can.edit}>
                                                 <SelectTrigger className="mt-1">
                                                     <SelectValue placeholder="Select your industry" />
                                                 </SelectTrigger>
@@ -204,7 +212,7 @@ export default function EditCompany({ company }: Props) {
 
                                         <div>
                                             <Label htmlFor="company_size">Company Size <span className="text-destructive">*</span></Label>
-                                            <Select value={data.company_size} onValueChange={(value) => setData('company_size', value)} required>
+                                            <Select value={data.company_size} onValueChange={(value) => setData('company_size', value)} required disabled={!can.edit}>
                                                 <SelectTrigger className="mt-1">
                                                     <SelectValue placeholder="Select company size" />
                                                 </SelectTrigger>
@@ -223,7 +231,7 @@ export default function EditCompany({ company }: Props) {
 
                                         <div>
                                             <Label htmlFor="company_type">Company Type <span className="text-destructive">*</span></Label>
-                                            <Select value={data.company_type} onValueChange={(value) => setData('company_type', value)} required>
+                                            <Select value={data.company_type} onValueChange={(value) => setData('company_type', value)} required disabled={!can.edit}>
                                                 <SelectTrigger className="mt-1">
                                                     <SelectValue placeholder="Select company type" />
                                                 </SelectTrigger>
@@ -250,6 +258,7 @@ export default function EditCompany({ company }: Props) {
                                             placeholder="Enter company address"
                                             className="mt-1"
                                             required
+                                            disabled={!can.edit}
                                         />
                                         {errors.address && (
                                             <p className="text-sm text-destructive mt-1">{errors.address}</p>
@@ -271,6 +280,7 @@ export default function EditCompany({ company }: Props) {
                                                 onChange={(e) => setData('website', e.target.value)}
                                                 placeholder="https://yourcompany.com"
                                                 className="mt-1"
+                                                disabled={!can.edit}
                                             />
                                             {errors.website && (
                                                 <p className="text-sm text-destructive mt-1">{errors.website}</p>
@@ -286,6 +296,7 @@ export default function EditCompany({ company }: Props) {
                                                 onChange={(e) => setData('facebook', e.target.value)}
                                                 placeholder="https://facebook.com/yourcompany"
                                                 className="mt-1"
+                                                disabled={!can.edit}
                                             />
                                             {errors.facebook && (
                                                 <p className="text-sm text-destructive mt-1">{errors.facebook}</p>
@@ -303,6 +314,7 @@ export default function EditCompany({ company }: Props) {
                                                 onChange={(e) => setData('twitter', e.target.value)}
                                                 placeholder="https://twitter.com/yourcompany"
                                                 className="mt-1"
+                                                disabled={!can.edit}
                                             />
                                             {errors.twitter && (
                                                 <p className="text-sm text-destructive mt-1">{errors.twitter}</p>
@@ -318,6 +330,7 @@ export default function EditCompany({ company }: Props) {
                                                 onChange={(e) => setData('instagram', e.target.value)}
                                                 placeholder="https://instagram.com/yourcompany"
                                                 className="mt-1"
+                                                disabled={!can.edit}
                                             />
                                             {errors.instagram && (
                                                 <p className="text-sm text-destructive mt-1">{errors.instagram}</p>
@@ -333,6 +346,7 @@ export default function EditCompany({ company }: Props) {
                                                 onChange={(e) => setData('youtube', e.target.value)}
                                                 placeholder="https://youtube.com/yourcompany"
                                                 className="mt-1"
+                                                disabled={!can.edit}
                                             />
                                             {errors.youtube && (
                                                 <p className="text-sm text-destructive mt-1">{errors.youtube}</p>
@@ -363,9 +377,15 @@ export default function EditCompany({ company }: Props) {
                                                   }
                                               }] : []}
                                               onremovefile={() => {
-                                                  setData('removed_company_registration_document', true);
+                                                  if (can.edit) {
+                                                      setData('removed_company_registration_document', true);
+                                                  }
                                               }}
-                                              onupdatefiles={(files) => setData('company_registration_document', files[0]?.file as File || null)}
+                                              onupdatefiles={(files) => {
+                                                  if (can.edit) {
+                                                      setData('company_registration_document', files[0]?.file as File || null);
+                                                  }
+                                              }}
                                               acceptedFileTypes={['application/pdf']}
                                               maxFileSize="5MB"
                                               labelIdle="Drag & Drop your Company Registration document or <span class='filepond--label-action'>Browse</span>"
@@ -377,6 +397,7 @@ export default function EditCompany({ company }: Props) {
                                                 },
                                               }}
                                               required
+                                              disabled={!can.edit}
                                           />
                                         </div>
                                         {errors.company_registration_document && (
@@ -403,15 +424,22 @@ export default function EditCompany({ company }: Props) {
                                                       }
                                                   }] : []}
                                                   onremovefile={() => {
-                                                      setData('removed_logo', true);
+                                                      if (can.edit) {
+                                                          setData('removed_logo', true);
+                                                      }
                                                   }}
-                                                  onupdatefiles={(files) => setData('logo', files[0]?.file as File || null)}
+                                                  onupdatefiles={(files) => {
+                                                      if (can.edit) {
+                                                          setData('logo', files[0]?.file as File || null);
+                                                      }
+                                                  }}
                                                   acceptedFileTypes={['image/*']}
                                                   maxFileSize="3MB"
                                                   labelIdle="Drag & Drop your company logo or <span class='filepond--label-action'>Browse</span>"
                                                   className="mt-1"
                                                   credits={false}
                                                   required
+                                                  disabled={!can.edit}
                                               />
                                             </div>
                                             {errors.logo && (
@@ -434,14 +462,21 @@ export default function EditCompany({ company }: Props) {
                                                   },
                                                 }}
                                                 onremovefile={() => {
-                                                    setData('removed_banner', true);
+                                                    if (can.edit) {
+                                                        setData('removed_banner', true);
+                                                    }
                                                 }}
-                                                onupdatefiles={(files) => setData('banner', files[0]?.file as File || null)}
+                                                onupdatefiles={(files) => {
+                                                    if (can.edit) {
+                                                        setData('banner', files[0]?.file as File || null);
+                                                    }
+                                                }}
                                                 acceptedFileTypes={['image/*']}
                                                 maxFileSize="5MB"
                                                 labelIdle="Drag & Drop your company banner or <span class='filepond--label-action'>Browse</span>"
                                                 className="mt-1"
                                                 credits={false}
+                                                disabled={!can.edit}
                                             />
                                             {errors.banner && (
                                                 <p className="text-sm text-destructive mt-1">{errors.banner}</p>
@@ -451,11 +486,13 @@ export default function EditCompany({ company }: Props) {
                                 </div>
 
                                 {/* Submit Button */}
+                                {can.edit && (
                                 <div className="flex justify-end">
                                     <Button type="submit" disabled={processing}>
-                                        {processing ? 'Updating...' : 'Update Company'}
-                                    </Button>
-                                </div>
+                                            {processing ? 'Updating...' : 'Update Company'}
+                                        </Button>
+                                    </div>
+                                )}
                             </form>
                         </CardContent>
                     </Card>

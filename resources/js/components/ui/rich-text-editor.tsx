@@ -161,7 +161,7 @@ export function RichTextEditor({
       {editable && (
         <div className="border-b border-input p-2 flex flex-wrap items-center gap-1">
           {/* Text Format Dropdown */}
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-px">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -220,9 +220,9 @@ export function RichTextEditor({
           <div className="shrink-0 bg-border w-[1px] mx-2 h-7" />
 
           {/* Text formatting */}
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-px">
             <Button
-              variant={editor.isActive('bold') ? 'default' : 'ghost'}
+              variant={editor.isActive('bold') ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().toggleBold().run()}
@@ -232,7 +232,7 @@ export function RichTextEditor({
               <RxFontBold className="h-4 w-4" />
             </Button>
             <Button
-              variant={editor.isActive('italic') ? 'default' : 'ghost'}
+              variant={editor.isActive('italic') ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -242,7 +242,7 @@ export function RichTextEditor({
               <RxFontItalic className="h-4 w-4" />
             </Button>
             <Button
-              variant={editor.isActive('underline') ? 'default' : 'ghost'}
+              variant={editor.isActive('underline') ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().toggleUnderline().run()}
@@ -252,7 +252,7 @@ export function RichTextEditor({
               <RxUnderline className="h-4 w-4" />
             </Button>
             <Button
-              variant={editor.isActive('strike') ? 'default' : 'ghost'}
+              variant={editor.isActive('strike') ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().toggleStrike().run()}
@@ -300,9 +300,9 @@ export function RichTextEditor({
           <div className="shrink-0 bg-border w-[1px] mx-2 h-7" />
 
           {/* Text alignment */}
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-px">
             <Button
-              variant={editor.isActive({ textAlign: 'left' }) ? 'default' : 'ghost'}
+              variant={editor.isActive({ textAlign: 'left' }) ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().setTextAlign('left').run()}
@@ -312,7 +312,7 @@ export function RichTextEditor({
               <RxTextAlignLeft className="h-4 w-4" />
             </Button>
             <Button
-              variant={editor.isActive({ textAlign: 'center' }) ? 'default' : 'ghost'}
+              variant={editor.isActive({ textAlign: 'center' }) ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().setTextAlign('center').run()}
@@ -322,7 +322,7 @@ export function RichTextEditor({
               <RxTextAlignCenter className="h-4 w-4" />
             </Button>
             <Button
-              variant={editor.isActive({ textAlign: 'right' }) ? 'default' : 'ghost'}
+              variant={editor.isActive({ textAlign: 'right' }) ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().setTextAlign('right').run()}
@@ -332,7 +332,7 @@ export function RichTextEditor({
               <RxTextAlignRight className="h-4 w-4" />
             </Button>
             <Button
-              variant={editor.isActive({ textAlign: 'justify' }) ? 'default' : 'ghost'}
+              variant={editor.isActive({ textAlign: 'justify' }) ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().setTextAlign('justify').run()}
@@ -346,9 +346,9 @@ export function RichTextEditor({
           <div className="shrink-0 bg-border w-[1px] mx-2 h-7" />
 
           {/* Lists */}
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-px">
             <Button
-              variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
+              variant={editor.isActive('bulletList') ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -358,7 +358,7 @@ export function RichTextEditor({
               <HiListBullet className="h-4 w-4" />
             </Button>
             <Button
-              variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
+              variant={editor.isActive('orderedList') ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().toggleOrderedList().run()}
@@ -372,9 +372,9 @@ export function RichTextEditor({
           <div className="shrink-0 bg-border w-[1px] mx-2 h-7" />
 
           {/* Other formatting */}
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-px">
             <Button
-              variant={editor.isActive('blockquote') ? 'default' : 'ghost'}
+              variant={editor.isActive('blockquote') ? 'secondary' : 'ghost'}
               size="sm"
               className="h-8 w-8 p-0"
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
@@ -398,7 +398,7 @@ export function RichTextEditor({
             <Popover open={linkPopoverOpen} onOpenChange={setLinkPopoverOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  variant={editor.isActive('link') ? 'default' : 'ghost'}
+                  variant={editor.isActive('link') ? 'secondary' : 'ghost'}
                   size="sm"
                   className="h-8 w-8 p-0"
                   type="button"
@@ -414,6 +414,7 @@ export function RichTextEditor({
               <PopoverContent className="w-64 p-2 flex flex-col gap-2">
                 <Input
                   placeholder="Paste or type a link..."
+                  type="url"
                   value={linkUrl}
                   onChange={e => setLinkUrl(e.target.value)}
                   autoFocus
@@ -461,7 +462,7 @@ export function RichTextEditor({
           shouldShow={({ editor }) => editor.isActive('link')}
           className="z-50"
         >
-          <div className="flex flex-col gap-2 bg-white border border-input rounded-md shadow-lg p-3 min-w-[220px]">
+          <div className="flex flex-col gap-2 bg-background border border-input rounded-md shadow-lg p-3 min-w-[220px]">
             <Input
               value={bubbleLinkUrl}
               onChange={e => {

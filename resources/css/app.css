@@ -158,6 +158,16 @@
     }
 }
 
+@layer utilities {
+  ::-webkit-scrollbar-thumb:hover {
+    background: #bdbdbd;
+  }
+
+  * {
+    scrollbar-color: #a3a3a3 var(--color-muted);
+  }
+}
+
 /* TipTap Editor Styles */
 .ProseMirror {
   outline: none;

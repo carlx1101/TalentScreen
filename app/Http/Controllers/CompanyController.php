@@ -21,6 +21,9 @@ class CompanyController extends Controller
 
         return Inertia::render('Company/Edit', [
             'company' => $company,
+            'can' => [
+                'edit' => $user->can('edit company'),
+            ],
         ]);
     }
 

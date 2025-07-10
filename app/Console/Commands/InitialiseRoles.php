@@ -38,10 +38,10 @@ class InitialiseRoles extends Command
             'restore company',
             'invite company editor',
             'view job listings',
-            'create job listing',
-            'edit job listing',
-            'delete job listing',
-            'restore job listing',
+            'create job listings',
+            'edit job listings',
+            'delete job listings',
+            'restore job listings',
         ];
 
         foreach ($permissions as $permission) {
@@ -61,17 +61,17 @@ class InitialiseRoles extends Command
                 'restore company',
                 'invite company editor',
                 'view job listings',
-                'create job listing',
-                'edit job listing',
-                'delete job listing',
+                'create job listings',
+                'edit job listings',
+                'delete job listings',
             ],
             'company editor' => [
                 'view company',
                 'edit company',
                 'view job listings',
-                'create job listing',
-                'edit job listing',
-                'delete job listing',
+                'create job listings',
+                'edit job listings',
+                'delete job listings',
             ],
         ];
 

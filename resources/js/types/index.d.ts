@@ -100,3 +100,19 @@ export interface Company {
   instagram: string | null;
   youtube: string | null;
 }
+
+export interface JobListing {
+  id: number;
+  title: string;
+  employment_type: string;
+  mode: string;
+  skills: { id: number; name: string }[];
+  languages?: string[];
+  salary_currency: string;
+  salary_min: number;
+  salary_max: number;
+  employment_benefits: { id: number; name: string }[];
+  is_active: boolean;
+  company_id: number;
+  company?: Company;
+}

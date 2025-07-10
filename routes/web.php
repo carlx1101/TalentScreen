@@ -103,13 +103,18 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-    'role:company owner|company editor',
     'ensure_onboarded',
 ])->group(function () {
     // Company management routes
-    Route::get('/company/edit', [CompanyController::class, 'edit'])->name('company.edit');
-    Route::put('/company/update', [CompanyController::class, 'update'])->name('company.update');
-    Route::resource('/job-listings', JobListingController::class);
+    Route::get('/company/edit', [CompanyController::class, 'edit'])->name('company.edit')->middleware('permission:view company');
+    Route::put('/company/update', [CompanyController::class, 'update'])->name('company.update')->middleware('permission:edit company');
+
+    Route::get('/job-listings', [JobListingController::class, 'index'])->name('job-listings.index')->middleware('permission:view job listings');
+    Route::get('/job-listings/create', [JobListingController::class, 'create'])->name('job-listings.create')->middleware('permission:create job listings');
+    Route::post('/job-listings', [JobListingController::class, 'store'])->name('job-listings.store')->middleware('permission:create job listings');
+    Route::get('/job-listings/{jobListing}/edit', [JobListingController::class, 'edit'])->name('job-listings.edit')->middleware('permission:edit job listings');
+    Route::put('/job-listings/{jobListing}', [JobListingController::class, 'update'])->name('job-listings.update')->middleware('permission:edit job listings');
+    Route::delete('/job-listings/{jobListing}', [JobListingController::class, 'destroy'])->name('job-listings.destroy')->middleware('permission:delete job listings');
 });
 
 /*

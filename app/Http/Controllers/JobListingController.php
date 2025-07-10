@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\JobListing;
+use App\Models\Skill;
+use App\Models\EmploymentBenefit;
 
 class JobListingController extends Controller
 {
@@ -35,7 +37,26 @@ class JobListingController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('create', JobListing::class);
+
+        $skills = Skill::all()->map(function ($skill) {
+            return [
+                'label' => $skill->name,
+                'value' => $skill->id,
+            ];
+        });
+
+        $employmentBenefits = EmploymentBenefit::all()->map(function ($benefit) {
+            return [
+                'label' => $benefit->name,
+                'value' => $benefit->id,
+            ];
+        });
+
+        return Inertia::render('JobListing/Create', [
+            'skills' => $skills,
+            'employmentBenefits' => $employmentBenefits,
+        ]);
     }
 
     /**
@@ -43,7 +64,68 @@ class JobListingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('create', JobListing::class);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'employment_type' => 'required|in:full time,part time,contract,internship,freelance',
+            'mode' => 'required|array|min:1',
+            'mode.*' => 'in:physical,remote,hybrid,flexible',
+            'skills' => 'required|array|min:1',
+            'skills.*' => 'exists:skills,id',
+            'languages' => 'required|array|min:1',
+            'languages.*' => 'string|max:10',
+            'location' => 'required|string|max:255',
+            'salary_currency' => 'nullable|string|max:3',
+            'salary_min' => 'nullable|integer|min:0',
+            'salary_max' => 'nullable|integer|min:0|gte:salary_min',
+            'benefits' => 'nullable|array',
+            'benefits.*' => 'exists:employment_benefits,id',
+            'is_active' => 'boolean',
+        ]);
+
+        // Validate salary logic
+        if (!empty($validated['salary_currency']) && (empty($validated['salary_min']) || empty($validated['salary_max']))) {
+            return back()->withErrors(['salary_currency' => 'Salary currency requires both minimum and maximum salary values.']);
+        }
+
+        if ((!empty($validated['salary_min']) || !empty($validated['salary_max'])) && empty($validated['salary_currency'])) {
+            return back()->withErrors(['salary_currency' => 'Salary values require a currency to be selected.']);
+        }
+
+        $user = auth()->user();
+        $company = $user->companies()->first();
+
+        if (!$company) {
+            return back()->withErrors(['company' => 'No company found for this user.']);
+        }
+
+        $jobListing = $company->jobListings()->create([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'employment_type' => $validated['employment_type'],
+            'mode' => $validated['mode'],
+            'skills' => $validated['skills'],
+            'languages' => $validated['languages'],
+            'location' => $validated['location'],
+            'salary_currency' => $validated['salary_currency'],
+            'salary_min' => $validated['salary_min'] ? (int) $validated['salary_min'] : null,
+            'salary_max' => $validated['salary_max'] ? (int) $validated['salary_max'] : null,
+            'benefits' => $validated['benefits'] ?? [],
+            'is_active' => $validated['is_active'] ?? true,
+        ]);
+
+        // Attach skills and benefits for the many-to-many relationships
+        if (!empty($validated['skills'])) {
+            $jobListing->skills()->attach($validated['skills']);
+        }
+
+        if (!empty($validated['benefits'])) {
+            $jobListing->employmentBenefits()->attach($validated['benefits']);
+        }
+
+        return redirect()->route('job-listings.index')->with('success', 'Job listing created successfully.');
     }
 
     /**

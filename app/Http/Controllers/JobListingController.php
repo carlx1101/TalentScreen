@@ -21,11 +21,11 @@ class JobListingController extends Controller
         $company = $user->companies()->first();
 
         $jobListings = $company ? $company->jobListings()
-            ->with(['skills', 'employmentBenefits'])
-            ->select('id', 'title', 'employment_type', 'mode', 'salary_currency', 'salary_min', 'salary_max', 'is_active')
+            ->select('id', 'title', 'skills', 'benefits', 'languages', 'employment_type', 'mode', 'salary_currency', 'salary_min', 'salary_max', 'is_active')
             ->orderBy('created_at', 'desc')
             ->get() : collect();
 
+            // dd($jobListings[0]);
         return Inertia::render('JobListing/Index', [
             'jobListings' => $jobListings,
             'company' => $company,
@@ -42,14 +42,14 @@ class JobListingController extends Controller
         $skills = Skill::all()->map(function ($skill) {
             return [
                 'label' => $skill->name,
-                'value' => $skill->id,
+                'value' => $skill->name,
             ];
         });
 
         $employmentBenefits = EmploymentBenefit::all()->map(function ($benefit) {
             return [
                 'label' => $benefit->name,
-                'value' => $benefit->id,
+                'value' => $benefit->name,
             ];
         });
 
@@ -73,7 +73,7 @@ class JobListingController extends Controller
             'mode' => 'required|array|min:1',
             'mode.*' => 'in:physical,remote,hybrid,flexible',
             'skills' => 'required|array|min:1',
-            'skills.*' => 'exists:skills,id',
+            'skills.*' => 'exists:skills,name',
             'languages' => 'required|array|min:1',
             'languages.*' => 'string|max:10',
             'location' => 'required|string|max:255',
@@ -81,7 +81,7 @@ class JobListingController extends Controller
             'salary_min' => 'nullable|integer|min:0',
             'salary_max' => 'nullable|integer|min:0|gte:salary_min',
             'benefits' => 'nullable|array',
-            'benefits.*' => 'exists:employment_benefits,id',
+            'benefits.*' => 'exists:employment_benefits,name',
             'is_active' => 'boolean',
         ]);
 
@@ -116,14 +116,6 @@ class JobListingController extends Controller
             'is_active' => $validated['is_active'] ?? true,
         ]);
 
-        // Attach skills and benefits for the many-to-many relationships
-        if (!empty($validated['skills'])) {
-            $jobListing->skills()->attach($validated['skills']);
-        }
-
-        if (!empty($validated['benefits'])) {
-            $jobListing->employmentBenefits()->attach($validated['benefits']);
-        }
 
         return redirect()->route('job-listings.index')->with('success', 'Job listing created successfully.');
     }

@@ -94,7 +94,9 @@ export default function JobListingConfiguration({ skills: initialSkills, employm
   const [deleteBenefitId, setDeleteBenefitId] = useState<number | null>(null);
 
   // Skills handlers
-  const handleCreateSkill = async () => {
+  const handleCreateSkill = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!skillFormRef.current?.reportValidity()) {
       return;
     }
@@ -319,7 +321,7 @@ export default function JobListingConfiguration({ skills: initialSkills, employm
             <CardContent>
               {/* Create New Skill */}
               {can.create_skill && (
-                <form ref={skillFormRef} className="mb-6 p-4 border rounded-lg">
+                <form ref={skillFormRef} className="mb-6 p-4 border rounded-lg" onSubmit={handleCreateSkill}>
                   <Label htmlFor="new-skill" className="text-sm font-medium">New Skill</Label>
                   <div className="flex gap-2 mt-2">
                     <Input
@@ -333,10 +335,9 @@ export default function JobListingConfiguration({ skills: initialSkills, employm
                       maxLength={255}
                     />
                     <Button
-                      onClick={handleCreateSkill}
                       disabled={processing || !newSkillName.trim()}
                       size="sm"
-                      type="button"
+                      type="submit"
                     >
                       Add
                     </Button>

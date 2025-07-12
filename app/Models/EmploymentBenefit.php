@@ -18,9 +18,4 @@ class EmploymentBenefit extends Model
         'icon_path',
         'name',
     ];
-
-    public function jobListings()
-    {
-        return $this->belongsToMany(JobListing::class);
-    }
 }

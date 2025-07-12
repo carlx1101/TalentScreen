@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Skill;
 use App\Models\Company;
-use App\Models\EmploymentBenefit;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Overtrue\LaravelVersionable\Versionable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -30,28 +29,26 @@ class JobListing extends Model
         'company_id',
     ];
 
-    protected $casts = [
-        'mode' => 'array',
-        'skills' => 'array',
-        'languages' => 'array',
-        'benefits' => 'array',
-        'is_active' => 'boolean',
-        'salary_min' => 'integer',
-        'salary_max' => 'integer',
-    ];
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+            'salary_min' => 'integer',
+            'salary_max' => 'integer',
+            'mode' => 'array',
+            'skills' => 'array',
+            'languages' => 'array',
+            'benefits' => 'array',
+        ];
+    }
 
     public function company()
     {
         return $this->belongsTo(Company::class);
-    }
-
-    public function skills()
-    {
-        return $this->belongsToMany(Skill::class);
-    }
-
-    public function employmentBenefits()
-    {
-        return $this->belongsToMany(EmploymentBenefit::class);
     }
 }

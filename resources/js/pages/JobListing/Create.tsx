@@ -8,11 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { RichTextEditor } from '@/components/ui/rich-text-editor';
+import { MinimalTiptapEditor } from '@/components/minimal-tiptap';
 import { MultiSelection } from '@/components/ui/multi-selection';
 import { toast } from 'sonner';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 // ISO 639-1 language codes with names
 const languages = [
@@ -270,12 +271,18 @@ export default function CreateJobListing({ skills, employmentBenefits }: Props) 
           <div className="space-y-6">
             <div>
               <Label htmlFor="description">Job Description <span className="text-destructive">*</span></Label>
-              <RichTextEditor
-                content={data.description}
-                onChange={(content) => setData('description', content)}
-                placeholder="Describe the job role, responsibilities, and requirements..."
-                className="mt-1"
-              />
+              <TooltipProvider>
+                <MinimalTiptapEditor
+                  value={data.description}
+                  onChange={(content) => setData('description', content as string)}
+                  className="w-full mt-1"
+                  editorContentClassName="p-5"
+                  output="html"
+                  autofocus={true}
+                  editable={true}
+                  editorClassName="focus:outline-hidden"
+                />
+              </TooltipProvider>
               {errors.description && (
                 <p className="text-sm text-destructive mt-1">{errors.description}</p>
               )}

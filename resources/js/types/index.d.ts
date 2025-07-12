@@ -105,8 +105,8 @@ export interface JobListing {
   id: number;
   title: string;
   employment_type: string;
-  mode: string;
-  skills: { id: number; name: string }[];
+  mode: string[];
+  skills: string[];
   languages?: string[];
   salary_currency: string;
   salary_min: number;
@@ -115,4 +115,5 @@ export interface JobListing {
   is_active: boolean;
   company_id: number;
   company?: Company;
+  benefits: string[];
 }

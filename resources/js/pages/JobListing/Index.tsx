@@ -1,5 +1,3 @@
-"use no memo"
-
 import { useEffect, useMemo, useState } from 'react';
 import {
   ColumnDef,
@@ -52,6 +50,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+interface Row {
+  original: JobListing;
+  [key: string]: any;
+}
+
 const breadcrumbs: BreadcrumbItem[] = [
   {
     title: 'Job Listings',
@@ -95,7 +98,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }) => <div className="pl-4 font-medium">{row.getValue('title')}</div>,
+        cell: ({ row }: { row: Row }) => <div className="pl-4 font-medium">{row.getValue('title')}</div>,
         enableHiding: false,
       },
       {
@@ -109,7 +112,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }) => row.original.employment_type,
+        cell: ({ row }: { row: Row }) => row.original.employment_type,
         enableHiding: true,
         meta: {
           header: 'Employment Type',
@@ -126,7 +129,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }) => row.original.mode,
+        cell: ({ row }: { row: Row }) => row.original.mode.join(', '),
         enableHiding: true,
         meta: {
           header: 'Mode',
@@ -143,9 +146,9 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }) =>
+        cell: ({ row }: { row: Row }) =>
           row.original.skills && row.original.skills.length > 0
-            ? row.original.skills.map(s => s.name).join(', ')
+            ? row.original.skills.join(', ')
             : '-',
         enableHiding: true,
         meta: {
@@ -163,7 +166,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }) =>
+        cell: ({ row }: { row: Row }) =>
           row.original.languages && row.original.languages.length > 0
             ? row.original.languages.join(', ')
             : '-',
@@ -184,7 +187,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }) =>
+        cell: ({ row }: { row: Row }) =>
           formatSalary(
             row.original.salary_currency,
             row.original.salary_min,
@@ -196,7 +199,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
         },
       },
       {
-        accessorKey: 'employment_benefits',
+        accessorKey: 'benefits',
         header: ({ column }) => (
           <Button
             variant="ghost"
@@ -206,9 +209,9 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }) =>
-          row.original.employment_benefits && row.original.employment_benefits.length > 0
-            ? row.original.employment_benefits.map(b => b.name).join(', ')
+        cell: ({ row }: { row: Row }) =>
+          row.original.benefits && row.original.benefits.length > 0
+            ? row.original.benefits.join(', ')
             : '-',
         enableHiding: true,
         meta: {
@@ -226,7 +229,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row }: { row: Row }) => (
           <span
             className={
               row.original.is_active
@@ -245,7 +248,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
       {
         id: 'actions',
         header: '',
-        cell: ({ row }) => (
+        cell: ({ row }: { row: Row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -255,12 +258,8 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(row.original.id))}>
-                Copy Job ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View</DropdownMenuItem>
               <DropdownMenuItem>Edit</DropdownMenuItem>
+              <DropdownMenuItem>Delete</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ),

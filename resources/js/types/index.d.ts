@@ -104,10 +104,12 @@ export interface Company {
 export interface JobListing {
   id: number;
   title: string;
+  description: string;
   employment_type: string;
   mode: string[];
   skills: string[];
   languages?: string[];
+  location: string;
   salary_currency: string;
   salary_min: number;
   salary_max: number;

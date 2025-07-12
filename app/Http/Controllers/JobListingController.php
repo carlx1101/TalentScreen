@@ -25,7 +25,6 @@ class JobListingController extends Controller
             ->orderBy('created_at', 'desc')
             ->get() : collect();
 
-            // dd($jobListings[0]);
         return Inertia::render('JobListing/Index', [
             'jobListings' => $jobListings,
             'company' => $company,
@@ -131,24 +130,93 @@ class JobListingController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(JobListing $jobListing)
     {
-        //
+        $this->authorize('update', $jobListing);
+
+        $skills = Skill::all()->map(function ($skill) {
+            return [
+                'label' => $skill->name,
+                'value' => $skill->name,
+            ];
+        });
+
+        $employmentBenefits = EmploymentBenefit::all()->map(function ($benefit) {
+            return [
+                'label' => $benefit->name,
+                'value' => $benefit->name,
+            ];
+        });
+
+        return Inertia::render('JobListing/Edit', [
+            'jobListing' => $jobListing,
+            'skills' => $skills,
+            'employmentBenefits' => $employmentBenefits,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, JobListing $jobListing)
     {
-        //
+        $this->authorize('update', $jobListing);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'employment_type' => 'required|in:full time,part time,contract,internship,freelance',
+            'mode' => 'required|array|min:1',
+            'mode.*' => 'in:physical,remote,hybrid,flexible',
+            'skills' => 'required|array|min:1',
+            'skills.*' => 'exists:skills,name',
+            'languages' => 'required|array|min:1',
+            'languages.*' => 'string|max:10',
+            'location' => 'required|string|max:255',
+            'salary_currency' => 'nullable|string|max:3',
+            'salary_min' => 'nullable|integer|min:0',
+            'salary_max' => 'nullable|integer|min:0|gte:salary_min',
+            'benefits' => 'nullable|array',
+            'benefits.*' => 'exists:employment_benefits,name',
+            'is_active' => 'boolean',
+        ]);
+
+        // Validate salary logic
+        if (!empty($validated['salary_currency']) && (empty($validated['salary_min']) || empty($validated['salary_max']))) {
+            return back()->withErrors(['salary_currency' => 'Salary currency requires both minimum and maximum salary values.']);
+        }
+
+        if ((!empty($validated['salary_min']) || !empty($validated['salary_max'])) && empty($validated['salary_currency'])) {
+            return back()->withErrors(['salary_currency' => 'Salary values require a currency to be selected.']);
+        }
+
+        $jobListing->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'employment_type' => $validated['employment_type'],
+            'mode' => $validated['mode'],
+            'skills' => $validated['skills'],
+            'languages' => $validated['languages'],
+            'location' => $validated['location'],
+            'salary_currency' => $validated['salary_currency'],
+            'salary_min' => $validated['salary_min'] ? (int) $validated['salary_min'] : null,
+            'salary_max' => $validated['salary_max'] ? (int) $validated['salary_max'] : null,
+            'benefits' => $validated['benefits'] ?? [],
+            'is_active' => $validated['is_active'] ?? true,
+        ]);
+
+        return redirect()->route('job-listings.index')->with('success', 'Job listing updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(JobListing $jobListing)
     {
-        //
+        $this->authorize('delete', $jobListing);
+
+        $jobListing->delete();
+
+        return redirect()->route('job-listings.index')->with('success', 'Job listing deleted successfully.');
     }
 }

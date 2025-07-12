@@ -11,7 +11,7 @@ import {
   ColumnFiltersState,
   VisibilityState,
 } from '@tanstack/react-table';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -25,10 +25,19 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -38,7 +47,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { MoreHorizontal, ChevronDown, ArrowUpDown } from 'lucide-react';
+import { MoreHorizontal, ChevronDown, ArrowUpDown, Edit, Trash2 } from 'lucide-react';
 import { BiSearchAlt } from 'react-icons/bi';
 import AppLayout from '@/layouts/app-layout';
 import { JobListing, type BreadcrumbItem } from '@/types';
@@ -49,11 +58,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-interface Row {
-  original: JobListing;
-  [key: string]: any;
-}
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -84,6 +89,41 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
   const [globalFilter, setGlobalFilter] = useState('');
   const [pageSize, setPageSize] = useState(10);
 
+  // Delete confirmation state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [jobListingToDelete, setJobListingToDelete] = useState<JobListing | null>(null);
+
+  // Handlers for edit and delete actions
+  const handleEdit = (jobListing: JobListing) => {
+    router.get(`/job-listings/${jobListing.id}/edit`);
+  };
+
+  const handleDeleteClick = (jobListing: JobListing) => {
+    setJobListingToDelete(jobListing);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (jobListingToDelete) {
+      router.delete(`/job-listings/${jobListingToDelete.id}`, {
+        onSuccess: () => {
+          toast.success('Job listing deleted successfully');
+          setDeleteDialogOpen(false);
+          setJobListingToDelete(null);
+        },
+        onError: (errors: Record<string, string>) => {
+          toast.error('Failed to delete job listing');
+          console.error('Delete error:', errors);
+        },
+      });
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setJobListingToDelete(null);
+  };
+
   // Table columns (no checkbox column)
   const columns = useMemo<ColumnDef<JobListing>[]>(
     () => [
@@ -98,7 +138,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }: { row: Row }) => <div className="pl-4 font-medium">{row.getValue('title')}</div>,
+        cell: ({ row }) => <div className="pl-4 font-medium">{row.getValue('title')}</div>,
         enableHiding: false,
       },
       {
@@ -112,7 +152,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }: { row: Row }) => row.original.employment_type,
+        cell: ({ row }) => row.original.employment_type,
         enableHiding: true,
         meta: {
           header: 'Employment Type',
@@ -129,7 +169,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }: { row: Row }) => row.original.mode.join(', '),
+        cell: ({ row }) => row.original.mode.join(', '),
         enableHiding: true,
         meta: {
           header: 'Mode',
@@ -146,7 +186,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }: { row: Row }) =>
+        cell: ({ row }) =>
           row.original.skills && row.original.skills.length > 0
             ? row.original.skills.join(', ')
             : '-',
@@ -166,7 +206,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }: { row: Row }) =>
+        cell: ({ row }) =>
           row.original.languages && row.original.languages.length > 0
             ? row.original.languages.join(', ')
             : '-',
@@ -187,7 +227,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }: { row: Row }) =>
+        cell: ({ row }) =>
           formatSalary(
             row.original.salary_currency,
             row.original.salary_min,
@@ -209,7 +249,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }: { row: Row }) =>
+        cell: ({ row }) =>
           row.original.benefits && row.original.benefits.length > 0
             ? row.original.benefits.join(', ')
             : '-',
@@ -229,7 +269,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
-        cell: ({ row }: { row: Row }) => (
+        cell: ({ row }) => (
           <span
             className={
               row.original.is_active
@@ -248,7 +288,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
       {
         id: 'actions',
         header: '',
-        cell: ({ row }: { row: Row }) => (
+        cell: ({ row }) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -258,8 +298,17 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Delete</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleEdit(row.original)}>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleDeleteClick(row.original)}
+                className="text-destructive"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ),
@@ -288,7 +337,7 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
     getFilteredRowModel: getFilteredRowModel(),
     globalFilterFn: (row, columnId, filterValue) => {
       // Global search: check all string columns
-      return Object.values(row.original).some(val =>
+      return Object.values(row.original).some((val: unknown) =>
         typeof val === 'string' && val.toLowerCase().includes(filterValue.toLowerCase())
       );
     },
@@ -445,6 +494,28 @@ export default function JobListingIndex({ jobListings }: { jobListings: JobListi
           </CardContent>
         </Card>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the job listing
+              {jobListingToDelete?.title && ` "${jobListingToDelete.title}"`}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleDeleteCancel}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AppLayout>
   );
 }
